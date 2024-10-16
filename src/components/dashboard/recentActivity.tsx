@@ -25,8 +25,30 @@ export default function RecentActivity() {
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div>
-                        <p className="text-sm sm:text-base font-semibold">Vitor Pinto</p>
-                        <span className="text-[12px] sm:text-sm text-gray-400">teste@teste.com</span>
+                        <p className="text-sm sm:text-base font-semibold">Vitor Pinto <span className="pl-2 text-[12px] font-light sm:text-sm text-gray-400">(vitorpinto@teste.com)</span></p>
+                        <span className="text-[12px] sm:text-sm text-gray-400">Criou um novo usuário <span className="font-semibold text-gray-600/75">Saullao de Festa</span> </span>
+                    </div>
+                </article>
+
+                <article className="flex items-center gap-2 border-b py-2">
+                    <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <p className="text-sm sm:text-base font-semibold">Vitor Pinto <span className="pl-2 text-[12px] font-light sm:text-sm text-gray-400">(vitorpinto@teste.com)</span></p>
+                        <span className="text-[12px] sm:text-sm text-gray-400">Criou um novo usuário <span className="font-semibold text-gray-600/75">Saullao de Festa</span> </span>
+                    </div>
+                </article>
+                
+                <article className="flex items-center gap-2 border-b py-2">
+                    <Avatar>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <p className="text-sm sm:text-base font-semibold">Vitor Pinto <span className="pl-2 text-[12px] font-light sm:text-sm text-gray-400">(vitorpinto@teste.com)</span></p>
+                        <span className="text-[12px] sm:text-sm text-gray-400">Criou um novo usuário <span className="font-semibold text-gray-600/75">Saullao de Festa</span> </span>
                     </div>
                 </article>
             </CardContent>
