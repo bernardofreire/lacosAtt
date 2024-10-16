@@ -1,5 +1,6 @@
-"use client"
+'use client'
 
+import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -67,34 +68,38 @@ export default function Sidebar() {
       <ScrollArea className="space-y-12 flex-1">
         <nav className="space-y-1 px-2">
           {navItems.map((item) => (
-            <Button
-              key={item.href}
-              variant="ghost"
-              className={cn(
-                "w-full justify-start",
-                activeItem === item.label
-                  ? "bg-primary text-white hover:bg-foreground hover:text-white"
-                  : "text-muted-foreground hover:bg-gray-100"
-              )}
-              onClick={() => setActiveItem(item.label)}
-            >
-              <item.icon className="mr-2 h-4 w-4" />
-              {item.label}
-            </Button>
-
+            <Link href={item.href} key={item.href} passHref>
+              <Button
+                as="a"
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start",
+                  activeItem === item.label
+                    ? "bg-primary text-white hover:bg-foreground hover:text-white"
+                    : "text-muted-foreground hover:bg-gray-100"
+                )}
+                onClick={() => setActiveItem(item.label)}
+              >
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.label}
+              </Button>
+            </Link>
           ))}
           {isAdmin && (
-            <Button
-              variant="ghost"
-              className={cn(
-                "w-full justify-start",
-                activeItem === "Users" ? "bg-primary text-white hover:bg-foreground hover:text-white" : "text-muted-foreground hover:bg-gray-100"
-              )}
-              onClick={() => setActiveItem("Users")}
-            >
-              <Shield className="mr-2 h-4 w-4" />
-              Usuários
-            </Button>
+            <Link href="/app/usuarios" passHref>
+              <Button
+                as="a"
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start",
+                  activeItem === "Users" ? "bg-primary text-white hover:bg-foreground hover:text-white" : "text-muted-foreground hover:bg-gray-100"
+                )}
+                onClick={() => setActiveItem("Users")}
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                Usuários
+              </Button>
+            </Link>
           )}
         </nav>
       </ScrollArea>

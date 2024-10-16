@@ -1,7 +1,9 @@
+import PeopleForm from "./_components/people-forms";
+
 export default function Pessoas(){
     return (
-        <div className="flex items-center justify-center h-screen">
-            Pessoas
+        <div className="flex py-6 h-screen">
+            <PeopleForm/>
         </div>
     )
 }
