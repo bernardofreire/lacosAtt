@@ -7,7 +7,7 @@ export default function Layout({ children }: PropsWithChildren) {
             <aside className="pl-4">
                 <PartnersSidebar /> {/*Sidebar */}
             </aside>
-            <main className="bg-background shadow-md border border-gray-300 rounded-lg m-4 overflow-hidden h-[calc(100vh-2rem)]">
+            <main className="bg-background shadow-md border border-gray-300 rounded-lg my-4 ml-4 overflow-hidden h-[calc(100vh-2rem)]">
                 {children}
             </main>
         </div>
