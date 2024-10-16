@@ -31,6 +31,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { TimePicker } from 'antd';
+import dayjs from 'dayjs';
+
+
 const initialActivities = [
     { id: 1, activityName: "Yoga", activityShift: "Morning", activityDay: "Monday", activitySchedule: "08:00 AM" },
     { id: 2, activityName: "Cooking Class", activityShift: "Afternoon", activityDay: "Wednesday", activitySchedule: "02:00 PM" },
@@ -40,7 +44,7 @@ const activityFields = [
     { name: "activityName", label: "Activity Name", type: "text", required: true },
     { name: "activityShift", label: "Shift", type: "select", required: true, options: ["Morning", "Afternoon", "Evening"] },
     { name: "activityDay", label: "Day", type: "select", required: true, options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] },
-    { name: "activitySchedule", label: "Schedule", type: "text", required: true },
+    { name: "activitySchedule", label: "Schedule", type: "time", required: true },
 ];
 
 export default function ActivitiesDashboard() {
@@ -57,6 +61,10 @@ export default function ActivitiesDashboard() {
             activity.activityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             activity.activityDay.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const handleTimeChange = (time, timeString) => {
+        setEditingActivity((prev) => ({ ...prev, activitySchedule: timeString }));
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -136,6 +144,13 @@ export default function ActivitiesDashboard() {
                                     ))}
                                 </SelectContent>
                             </Select>
+                        ) : field.type === "time" ? ( // Renderizando o TimePicker
+                            <TimePicker
+                                defaultValue={dayjs(activity[field.name], 'HH:mm')}
+                                format='HH:mm'
+                                onChange={handleTimeChange}
+                                className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
+                            />
                         ) : (
                             <Input
                                 type={field.type}
@@ -183,8 +198,8 @@ export default function ActivitiesDashboard() {
                         </DialogHeader>
                         {renderActivityForm(newActivity)}
                         <DialogFooter>
-                            <Button onClick={handleAddActivity}>Save</Button>
                             <Button variant="secondary" onClick={resetNewActivity}>Cancel</Button>
+                            <Button onClick={handleAddActivity}>Save</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
@@ -246,8 +261,8 @@ export default function ActivitiesDashboard() {
                     </DialogHeader>
                     {editingActivity && renderActivityForm(editingActivity)}
                     <DialogFooter>
-                        <Button onClick={handleEditActivity}>Update</Button>
                         <Button variant="secondary" onClick={resetEditingActivity}>Cancel</Button>
+                        <Button onClick={handleEditActivity}>Update</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
