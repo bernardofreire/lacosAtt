@@ -349,7 +349,8 @@ export default function EnhancedPeopleDashboard() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">People Dashboard</h1>
-      <div className="flex justify-between items-center mb-4">
+      <span className="text-[12px] sm:text-sm text-gray-400">Gerencie e visualize as informações das pessoas cadastradas. Acompanhe os detalhes, edite e organize os dados conforme suas necessidades.</span>
+      <div className="flex justify-between items-center mt-10 mb-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
