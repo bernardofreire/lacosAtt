@@ -1,7 +1,9 @@
+import ActivitiesDashboard from "./_components/activity_form";
+
 export default function Atividades(){
     return (
-        <div className="flex items-center justify-center h-screen"> 
-            Atividades
+        <div className="flex py-6  h-screen"> 
+            <ActivitiesDashboard/>
         </div>
     )
 }
