@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 export default function RecentActivity() {
     return (
 
-        <Card>
+        <Card className="flex-1">
             <CardHeader>
                 <div className="flex items-center  justify-center">
                     <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">
