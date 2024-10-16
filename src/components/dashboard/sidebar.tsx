@@ -1,75 +1,113 @@
 "use client"
 
 import { useState } from "react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Home,
+  Users,
+  Activity,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Shield
+} from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Menu, Search, Home, Users, Activity, UserCircle } from "lucide-react"
 
 const navItems = [
-  { icon: Home, label: "Dashboard", href: "/" },
-  { icon: Users, label: "Peoples", href: "/peoples" },
-  { icon: Activity, label: "Activities", href: "/activities" },
-  { icon: UserCircle, label: "Users", href: "/users" },
+  { icon: Home, label: "Dashboard", href: "/app" },
+  { icon: Users, label: "Pessoas", href: "/app/pessoas" },
+  { icon: Activity, label: "Atividades", href: "/app/atividades" },
 ]
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(false)
-  const [active, setActive] = useState("Dashboard")
+  const [activeItem, setActiveItem] = useState("Dashboard")
+  const [isAdmin, setIsAdmin] = useState(true) // This should be set based on user role
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6" />
+    <div className="w-64 h-screen flex flex-col">
+      <div className="p-4 mt-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="w-full justify-start p-0 h-auto hover:bg-transparent">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
+              <div className="ml-3 text-left">
+                <div className="font-medium">John Doe</div>
+                <div className="text-sm text-muted-foreground">john@example.com</div>
+              </div>
+              <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configurações</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sair</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <ScrollArea className="space-y-12 flex-1">
+        <nav className="space-y-1 px-2">
+          {navItems.map((item) => (
+            <Button
+              key={item.href}
+              variant="ghost"
+              className={cn(
+                "w-full justify-start",
+                activeItem === item.label
+                  ? "bg-primary text-white hover:bg-foreground hover:text-white"
+                  : "text-muted-foreground hover:bg-gray-100"
+              )}
+              onClick={() => setActiveItem(item.label)}
+            >
+              <item.icon className="mr-2 h-4 w-4" />
+              {item.label}
+            </Button>
+
+          ))}
+          {isAdmin && (
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start",
+                activeItem === "Users" ? "bg-primary text-white hover:bg-foreground hover:text-white" : "text-muted-foreground hover:bg-gray-100"
+              )}
+              onClick={() => setActiveItem("Users")}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              Usuários
+            </Button>
+          )}
+        </nav>
+      </ScrollArea>
+      <div className="mt-auto p-4 border-t">
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => setActiveItem("Settings")}
+        >
+          <Settings className="mr-2 h-4 w-4" />
+          Configurações
         </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="p-0">
-        <SidebarContent />
-      </SheetContent>
-
-      <div className="hidden md:flex">
-        <SidebarContent />
       </div>
-    </Sheet>
+    </div>
   )
-
-  function SidebarContent() {
-    return (
-      <div className="flex flex-col ">
-        <div className="p-4">
-          <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
-            Eden
-          </h2>
-          <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search" className="pl-8" />
-            </div>
-            <nav className="space-y-2">
-              {navItems.map((item) => (
-                <Button
-                  key={item.href}
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start",
-                    active === item.label && "bg-primary text-primary-foreground"
-                  )}
-                  onClick={() => setActive(item.label)}
-                >
-                  <item.icon className="mr-2 h-4 w-4" />
-                  {item.label}
-                </Button>
-              ))}
-            </nav>
-          </div>
-        </div>
-        <ScrollArea className="flex-1">
-          {/* Add scrollable content here if needed */}
-        </ScrollArea>
-      </div>
-    )
-  }
 }
