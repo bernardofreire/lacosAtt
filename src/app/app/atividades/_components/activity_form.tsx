@@ -106,6 +106,9 @@ export default function ActivitiesDashboard() {
             setErrors(prev => ({ ...prev, [name]: null }));
         }
     };
+    
+
+    // Validar se o campo está preenchido ou não. Se nao tiver solta um erro
 
     const validateActivity = (activity: Partial<Activity>) => {
         const activityErrors: ErrorState = {};
@@ -121,6 +124,7 @@ export default function ActivitiesDashboard() {
         setErrors(activityErrors);
         return isValid;
     };
+
 
     // Adicionar uma nova atividade
 
@@ -144,17 +148,24 @@ export default function ActivitiesDashboard() {
         }
     };
 
+
     // Deletar uma atividade
 
     const handleDelete = (id: number) => {
         setActivities(activities.filter(activity => activity.id !== id));
     };
 
+
+    // Apagar os campos quando tiver adicionando uma nova atividade na validação
+
     const resetNewActivity = () => {
         setNewActivity({});
         setIsAddDialogOpen(false);
         setErrors({});
     };
+
+
+    // Apagar os campos quando tiver editando uma nova atividade na validação
 
     const resetEditingActivity = () => {
         setEditingActivity(null);
@@ -184,7 +195,7 @@ export default function ActivitiesDashboard() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                        ) : field.type === "time" ? ( // Renderizando o TimePicker
+                        ) : field.type === "time" ? (
                             <TimePicker
                                 defaultValue={dayjs(activity[field.name], 'HH:mm')}
                                 format='HH:mm'
