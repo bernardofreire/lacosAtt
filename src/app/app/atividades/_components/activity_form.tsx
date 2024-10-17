@@ -42,7 +42,7 @@ interface Activity {
     activityShift: string;
     activityDay: string;
     activitySchedule?: string;
-    [key: string]: any; 
+    [key: string]: any;
 }
 
 
@@ -86,15 +86,19 @@ export default function ActivitiesDashboard() {
             activity.activityDay.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleTimeChange = (time: Dayjs | null, timeString: string) => {
-        setEditingActivity((prev) => ({ ...prev ?? {}, activitySchedule: timeString }));
+    // Função do campo de time no formulario de atividade
+
+    const handleTimeChange = (time: Dayjs, timeString: string | string[]) => {
+        const schedule = Array.isArray(timeString) ? timeString[0] : timeString;
+        setEditingActivity((prev) => ({ ...prev ?? {}, activitySchedule: schedule }));
     };
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
 
-        setEditingActivity((prev) => ({
-            ...prev,
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = event.target;
+        setNewActivity((prevActivity) => ({
+            ...prevActivity,
             [name]: value,
         }));
 
@@ -106,7 +110,7 @@ export default function ActivitiesDashboard() {
             setErrors(prev => ({ ...prev, [name]: null }));
         }
     };
-    
+
 
     // Validar se o campo está preenchido ou não. Se nao tiver solta um erro
 
@@ -130,9 +134,9 @@ export default function ActivitiesDashboard() {
 
     const handleAddActivity = () => {
         if (validateActivity(newActivity)) {
-            const id = activities.length > 0 ? Math.max(...activities.map((a) => a.id)) + 1 : 1;
+            const id = Math.max(...activities.map((a) => a.id)) + 1;
             setActivities([...activities, { id, ...newActivity } as Activity]);
-            resetNewActivity();
+            resetNewActivity(); // Certifique-se de que isso limpa o estado de newActivity
         }
     };
 
@@ -199,14 +203,15 @@ export default function ActivitiesDashboard() {
                             <TimePicker
                                 defaultValue={dayjs(activity[field.name], 'HH:mm')}
                                 format='HH:mm'
-                                onChange={handleTimeChange}
+                                onChange={handleTimeChange} // Agora aceita os tipos corretos
                                 className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
                             />
+
                         ) : (
                             <Input
                                 type={field.type}
                                 name={field.name}
-                                value={activity[field.name] || ""}
+                                value={newActivity[field.name] || ""}
                                 onChange={handleInputChange}
                                 placeholder={field.label}
                                 className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
