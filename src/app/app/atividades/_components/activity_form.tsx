@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import React, { ChangeEvent } from 'react';
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,30 +33,52 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { TimePicker } from 'antd';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+interface Activity {
+    id: number;
+    activityName: string;
+    activityShift: string;
+    activityDay: string;
+    activitySchedule?: string;
+    [key: string]: any; 
+}
 
-const initialActivities = [
+
+type ActivityField = {
+    name: string;
+    label: string;
+    type: string;
+    required: boolean;
+    options?: string[];
+};
+
+
+const initialActivities: Activity[] = [
     { id: 1, activityName: "Yoga", activityShift: "Morning", activityDay: "Monday", activitySchedule: "08:00 AM" },
     { id: 2, activityName: "Cooking Class", activityShift: "Afternoon", activityDay: "Wednesday", activitySchedule: "02:00 PM" },
 ];
 
-const activityFields = [
+const activityFields: ActivityField[] = [
     { name: "activityName", label: "Activity Name", type: "text", required: true },
     { name: "activityShift", label: "Shift", type: "select", required: true, options: ["Morning", "Afternoon", "Evening"] },
     { name: "activityDay", label: "Day", type: "select", required: true, options: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] },
     { name: "activitySchedule", label: "Schedule", type: "time", required: true },
 ];
 
+type ErrorState = {
+    [key: string]: string | null
+};
+
 export default function ActivitiesDashboard() {
-    const [activities, setActivities] = useState(initialActivities);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-    const [newActivity, setNewActivity] = useState({});
-    const [editingActivity, setEditingActivity] = useState(null);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [activities, setActivities] = useState<Activity[]>(initialActivities);
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
+    const [newActivity, setNewActivity] = useState<Partial<Activity>>({});
+    const [editingActivity, setEditingActivity] = useState<Partial<Activity> | null>(null);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+    const [errors, setErrors] = useState<ErrorState>({});
 
     const filteredActivities = activities.filter(
         (activity) =>
@@ -63,27 +86,33 @@ export default function ActivitiesDashboard() {
             activity.activityDay.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleTimeChange = (time, timeString) => {
-        setEditingActivity((prev) => ({ ...prev, activitySchedule: timeString }));
+    const handleTimeChange = (time: Dayjs | null, timeString: string) => {
+        setEditingActivity((prev) => ({ ...prev ?? {}, activitySchedule: timeString }));
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setEditingActivity((prev) => ({ ...prev, [name]: value }));
 
-        if (activityFields.find(field => field.name === name).required && value.trim() === '') {
+        setEditingActivity((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+
+        const field = activityFields.find(field => field.name === name);
+
+        if (field?.required && value.trim() === '') {
             setErrors(prev => ({ ...prev, [name]: 'This field is required' }));
         } else {
             setErrors(prev => ({ ...prev, [name]: null }));
         }
     };
 
-    const validateActivity = (activity) => {
-        const activityErrors = {};
+    const validateActivity = (activity: Partial<Activity>) => {
+        const activityErrors: ErrorState = {};
         let isValid = true;
 
         activityFields.forEach(field => {
-            if (field.required && (!activity[field.name] || activity[field.name].trim() === '')) {
+            if (field.required && (!activity[field.name as keyof Activity] || activity[field.name as keyof Activity]?.toString().trim() === '')) {
                 activityErrors[field.name] = 'This field is required';
                 isValid = false;
             }
@@ -93,24 +122,31 @@ export default function ActivitiesDashboard() {
         return isValid;
     };
 
+    // Adicionar uma nova atividade
+
     const handleAddActivity = () => {
         if (validateActivity(newActivity)) {
-            const id = Math.max(...activities.map((a) => a.id)) + 1;
-            setActivities([...activities, { id, ...newActivity }]);
+            const id = activities.length > 0 ? Math.max(...activities.map((a) => a.id)) + 1 : 1;
+            setActivities([...activities, { id, ...newActivity } as Activity]);
             resetNewActivity();
         }
     };
 
+
+    // Editar uma atividade existente
+
     const handleEditActivity = () => {
-        if (validateActivity(editingActivity)) {
+        if (validateActivity(editingActivity as Activity)) {
             setActivities(activities.map(activity =>
-                activity.id === editingActivity.id ? editingActivity : activity
+                activity.id === editingActivity?.id ? (editingActivity as Activity) : activity
             ));
             resetEditingActivity();
         }
     };
 
-    const handleDelete = (id) => {
+    // Deletar uma atividade
+
+    const handleDelete = (id: number) => {
         setActivities(activities.filter(activity => activity.id !== id));
     };
 
@@ -126,14 +162,17 @@ export default function ActivitiesDashboard() {
         setErrors({});
     };
 
-    const renderActivityForm = (activity) => {
+    const renderActivityForm = (activity: Activity) => {
         return (
             <div>
                 {activityFields.map((field) => (
                     <div key={field.name} className="mb-4">
                         <label className="block text-sm font-medium">{field.label}</label>
                         {field.type === "select" ? (
-                            <Select value={activity[field.name]} onValueChange={(value) => handleInputChange({ target: { name: field.name, value } })}>
+                            <Select
+                                value={activity[field.name]}
+                                onValueChange={(value: string) => handleInputChange({ target: { name: field.name, value } } as ChangeEvent<HTMLInputElement>)}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
@@ -175,12 +214,12 @@ export default function ActivitiesDashboard() {
                 <CardHeader>
                     <div className="flex items-center  justify-center">
                         <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">
-                        Activities Dashboard
+                            Activities Dashboard
                         </CardTitle>
                         <Activity className="ml-auto w-4 h-4" />
                     </div>
                     <CardDescription>
-                    Adicione e gerencie atividades. Defina horários, turnos e dias da semana para manter tudo organizado e facilitar o planejamento.
+                        Adicione e gerencie atividades. Defina horários, turnos e dias da semana para manter tudo organizado e facilitar o planejamento.
                     </CardDescription>
                 </CardHeader>
             </Card>
