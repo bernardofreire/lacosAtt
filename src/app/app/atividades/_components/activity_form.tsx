@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -33,6 +33,7 @@ import {
 
 import { TimePicker } from 'antd';
 import dayjs from 'dayjs';
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 
 const initialActivities = [
@@ -170,8 +171,21 @@ export default function ActivitiesDashboard() {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Activities Dashboard</h1>
-            <span className="text-[12px] sm:text-sm text-gray-400">Adicione e gerencie atividades. Defina horários, turnos e dias da semana para manter tudo organizado e facilitar o planejamento.</span>
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center  justify-center">
+                        <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">
+                        Activities Dashboard
+                        </CardTitle>
+                        <Activity className="ml-auto w-4 h-4" />
+                    </div>
+                    <CardDescription>
+                    Adicione e gerencie atividades. Defina horários, turnos e dias da semana para manter tudo organizado e facilitar o planejamento.
+                    </CardDescription>
+                </CardHeader>
+            </Card>
+            {/* <h1 className="text-2xl font-bold mb-4">Activities Dashboard</h1>
+            <span className="text-[12px] sm:text-sm text-gray-400">Adicione e gerencie atividades. Defina horários, turnos e dias da semana para manter tudo organizado e facilitar o planejamento.</span> */}
             <div className="flex justify-between items-center mt-10 mb-4">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
