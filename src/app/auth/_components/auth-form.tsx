@@ -3,13 +3,68 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast"
+import { Toaster } from "@/components/ui/toaster";
 
 export function AuthForm() {
     const form = useForm();
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const router = useRouter();
+    const { toast } = useToast()
 
     const handleSubmit = form.handleSubmit(async (data) => {
-        console.log(data);
+        try {
+            const Api = await fetch(
+                apiUrl + "/login",
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "username": data.username,
+                        "password": data.password
+                    })
+                });
+
+
+            let apiResponse = await Api.json();
+
+            if (apiResponse.status_code === 202) {
+                // Armazenar o token no localStorage
+                localStorage.setItem('token', apiResponse.token);
+
+                // Exibir toast de sucesso
+                toast({
+                    title: "Login bem-sucedido",
+                    description: "Você será redirecionado em breve...",
+                });
+
+                // Redirecionar após um pequeno delay para que o toast apareça
+                setTimeout(() => {
+                    router.push('/app');
+                }, 2000); // 2 segundos de delay antes do redirecionamento
+            } else {
+                // Tratar erro de login e mostrar toast de erro
+                toast({
+                    title: "Erro no login",
+                    description: "Usuário ou senha incorretos.",
+                    variant: "destructive", // Variante para exibir como erro
+                });
+            }
+
+        } catch (error) {
+            console.error('Erro ao tentar logar', error);
+
+            // Mostrar um toast de erro genérico
+            toast({
+                title: "Erro no login",
+                description: "Ocorreu um erro. Tente novamente.",
+                variant: "destructive",
+            });
+        }
+
+
+
     });
 
     return (
@@ -20,7 +75,7 @@ export function AuthForm() {
                         <Image
                             src="/images/logo.svg"
                             alt="Logo"
-                            width={400} // Ajuste o tamanho da imagem para telas menores
+                            width={400}
                             height={400}
                             draggable={false}
                         />
@@ -40,9 +95,9 @@ export function AuthForm() {
                             {/* Inputs maiores e responsivos */}
                             <Input
                                 className="focus:border-purple-800 w-full py-3"
-                                type="email"
-                                placeholder="Digite o email"
-                                {...form.register('email')}
+                                type="username"
+                                placeholder="Digite o usuário"
+                                {...form.register('username')}
                             />
                             <Input
                                 className="focus:border-purple-800 w-full py-3"
@@ -58,6 +113,7 @@ export function AuthForm() {
                     </form>
                 </div>
             </div>
+            <Toaster />
         </main>
     );
 }
