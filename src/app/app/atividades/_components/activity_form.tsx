@@ -1,11 +1,10 @@
 "use client";
-
+import NewActivityForm from './activity_create';
 import { useState } from "react";
 import React, { ChangeEvent } from 'react';
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
     Table,
     TableBody,
@@ -32,11 +31,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { TimePicker } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface Activity {
+export interface Activity {
     id: number;
     activityName: string;
     activityShift: string;
@@ -76,84 +73,11 @@ export default function ActivitiesDashboard() {
     const [activities, setActivities] = useState<Activity[]>(initialActivities);
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
-    const [newActivity, setNewActivity] = useState<Partial<Activity>>({});
-    const [editingActivity, setEditingActivity] = useState<Partial<Activity> | null>(null);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
-    const [errors, setErrors] = useState<ErrorState>({});
-
     const filteredActivities = activities.filter(
         (activity) =>
             activity.activityName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             activity.activityDay.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    // Função do campo de time no formulario de atividade
-
-    const handleTimeChange = (time: Dayjs, timeString: string | string[], fieldName: string) => {
-        
-        const schedule = Array.isArray(timeString) ? timeString[0] : timeString;
-        setEditingActivity((prev) => ({ ...prev ?? {}, [fieldName]: schedule }));
-        
-    };
-
-
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = event.target;
-        setNewActivity((prevActivity) => ({
-            ...prevActivity,
-            [name]: value,
-        }));
-        console.log(value)
-        const field = activityFields.find(field => field.name === name);
-
-        if (field?.required && value.trim() === '') {
-            setErrors(prev => ({ ...prev, [name]: 'This field is required' }));
-        } else {
-            setErrors(prev => ({ ...prev, [name]: null }));
-        }
-    };
-
-
-    // Validar se o campo está preenchido ou não. Se nao tiver solta um erro
-
-    const validateActivity = (activity: Partial<Activity>) => {
-        const activityErrors: ErrorState = {};
-        let isValid = true;
-
-        activityFields.forEach(field => {
-            if (field.required && (!activity[field.name as keyof Activity] || activity[field.name as keyof Activity]?.toString().trim() === '')) {
-                activityErrors[field.name] = 'This field is required';
-                isValid = false;
-            }
-        });
-
-        setErrors(activityErrors);
-        return isValid;
-    };
-
-
-    // Adicionar uma nova atividade
-
-    const handleAddActivity = () => {
-        if (validateActivity(newActivity)) {
-            const id = Math.max(...activities.map((a) => a.id)) + 1;
-            setActivities([...activities, { id, ...newActivity } as Activity]);
-            resetNewActivity(); // Certifique-se de que isso limpa o estado de newActivity
-        }
-    };
-
-
-    // Editar uma atividade existente
-
-    const handleEditActivity = () => {
-        if (validateActivity(editingActivity as Activity)) {
-            setActivities(activities.map(activity =>
-                activity.id === editingActivity?.id ? (editingActivity as Activity) : activity
-            ));
-            resetEditingActivity();
-        }
-    };
 
 
     // Deletar uma atividade
@@ -161,71 +85,8 @@ export default function ActivitiesDashboard() {
     const handleDelete = (id: number) => {
         setActivities(activities.filter(activity => activity.id !== id));
     };
+    
 
-
-    // Apagar os campos quando tiver adicionando uma nova atividade na validação
-
-    const resetNewActivity = () => {
-        setNewActivity({});
-        setIsAddDialogOpen(false);
-        setErrors({});
-    };
-
-
-    // Apagar os campos quando tiver editando uma nova atividade na validação
-
-    const resetEditingActivity = () => {
-        setEditingActivity(null);
-        setIsEditDialogOpen(false);
-        setErrors({});
-    };
-
-    const renderActivityForm = (activity: Activity) => {
-        return (
-            <div>
-                {activityFields.map((field) => (
-                    <div key={field.name} className="mb-4">
-                        <label className="block text-sm font-medium">{field.label}</label>
-                        {field.type === "select" ? (
-                            <Select
-                                value={activity[field.name]}
-                                onValueChange={(value: string) => handleInputChange({ target: { name: field.name, value } } as ChangeEvent<HTMLInputElement>)}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {field.options.map(option => (
-                                        <SelectItem key={option} value={option}>
-                                            {option}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        ) : field.type === "time" ? (
-                            <TimePicker
-                                defaultValue={dayjs(activity[field.name] || '00:00', 'HH:mm')}
-                                format='HH:mm'
-                                onChange={(time, timeString) => handleTimeChange(time, timeString, field.name)}
-                                className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
-                            />
-
-                        ) : (
-                            <Input
-                                type={field.type}
-                                name={field.name}
-                                value={newActivity[field.name] || ""}
-                                onChange={handleInputChange}
-                                placeholder={field.label}
-                                className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
-                            />
-                        )}
-                        {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
-                    </div>
-                ))}
-            </div>
-        );
-    };
 
     return (
         <div className="container mx-auto p-4">
@@ -258,22 +119,24 @@ export default function ActivitiesDashboard() {
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                     <DialogTrigger asChild>
                         <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Add Activity
+                            <Plus className="mr-2 h-4 w-4" /> Nova Atividade
                         </Button>
                     </DialogTrigger>
 
                     <DialogContent className="max-w-md">
                         <DialogHeader>
-                            <DialogTitle>Add Activity</DialogTitle>
+                            <DialogTitle>Nova Atividade</DialogTitle>
                             <DialogDescription>
                                 Enter the details of the new activity here.
                             </DialogDescription>
                         </DialogHeader>
-                        {renderActivityForm(newActivity)}
-                        <DialogFooter>
-                            <Button variant="secondary" onClick={resetNewActivity}>Cancel</Button>
-                            <Button onClick={handleAddActivity}>Save</Button>
-                        </DialogFooter>
+                        <NewActivityForm
+                            onAddActivity={(newActivity) => {
+                                setActivities(prevActivities => [...prevActivities, { ...newActivity, id: activities.length + 1 }]);
+                                setIsAddDialogOpen(false);  // Fecha o modal após adicionar
+                            }}
+                            onSave={() => setIsAddDialogOpen(false)} // Fecha o modal após salvar
+                        />
                     </DialogContent>
                 </Dialog>
             </div>
@@ -306,10 +169,7 @@ export default function ActivitiesDashboard() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                        <DropdownMenuItem onClick={() => {
-                                            setEditingActivity(activity);
-                                            setIsEditDialogOpen(true);
-                                        }}>
+                                        <DropdownMenuItem>
                                             <Edit className="mr-2 h-4 w-4" />
                                             Edit
                                         </DropdownMenuItem>
@@ -326,7 +186,7 @@ export default function ActivitiesDashboard() {
                 </TableBody>
             </Table>
 
-            <Dialog open={isEditDialogOpen} onOpenChange={resetEditingActivity}>
+            <Dialog>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
                         <DialogTitle>Edit Activity</DialogTitle>
@@ -334,10 +194,9 @@ export default function ActivitiesDashboard() {
                             Update the details of the activity here.
                         </DialogDescription>
                     </DialogHeader>
-                    {editingActivity && renderActivityForm(editingActivity)}
                     <DialogFooter>
-                        <Button variant="secondary" onClick={resetEditingActivity}>Cancel</Button>
-                        <Button onClick={handleEditActivity}>Update</Button>
+                        <Button>Cancel</Button>
+                        <Button>Update</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
