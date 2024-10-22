@@ -1,7 +1,9 @@
+import UsersDashboard from "./_components/user_form";
+
 export default function Usuarios(){
     return (
-        <div className="flex items-center justify-center h-screen">
-            Usuarios
+        <div className="flex py-6  h-screen">
+            <UsersDashboard/>
         </div>
     )
 }

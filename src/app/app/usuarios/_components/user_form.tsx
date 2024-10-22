@@ -89,11 +89,9 @@ export default function ActivitiesDashboard() {
 
     // Função do campo de time no formulario de atividade
 
-    const handleTimeChange = (time: Dayjs, timeString: string | string[], fieldName: string) => {
-        
+    const handleTimeChange = (time: Dayjs, timeString: string | string[]) => {
         const schedule = Array.isArray(timeString) ? timeString[0] : timeString;
-        setEditingActivity((prev) => ({ ...prev ?? {}, [fieldName]: schedule }));
-        
+        setEditingActivity((prev) => ({ ...prev ?? {}, activitySchedule: schedule }));
     };
 
 
@@ -104,7 +102,7 @@ export default function ActivitiesDashboard() {
             ...prevActivity,
             [name]: value,
         }));
-        console.log(value)
+
         const field = activityFields.find(field => field.name === name);
 
         if (field?.required && value.trim() === '') {
@@ -204,9 +202,9 @@ export default function ActivitiesDashboard() {
                             </Select>
                         ) : field.type === "time" ? (
                             <TimePicker
-                                defaultValue={dayjs(activity[field.name] || '00:00', 'HH:mm')}
+                                defaultValue={dayjs(activity[field.name], 'HH:mm')}
                                 format='HH:mm'
-                                onChange={(time, timeString) => handleTimeChange(time, timeString, field.name)}
+                                onChange={handleTimeChange} // Agora aceita os tipos corretos
                                 className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
                             />
 
@@ -233,12 +231,12 @@ export default function ActivitiesDashboard() {
                 <CardHeader>
                     <div className="flex items-center  justify-center">
                         <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">
-                            Activities Dashboard
+                            Users Dashboard
                         </CardTitle>
                         <Activity className="ml-auto w-4 h-4" />
                     </div>
                     <CardDescription>
-                        Adicione e gerencie atividades. Defina horários, turnos e dias da semana para manter tudo organizado e facilitar o planejamento.
+                        Adicione e gerencie usuários.
                     </CardDescription>
                 </CardHeader>
             </Card>
