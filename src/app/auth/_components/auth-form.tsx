@@ -3,67 +3,29 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster";
+import { signIn } from "next-auth/react"
 
 export function AuthForm() {
     const form = useForm();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const router = useRouter();
-    const { toast } = useToast()
+    // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    // const router = useRouter();
+    // const { toast } = useToast()
+
+    const searchParams = useSearchParams()
+
+    const error = searchParams.get('error')
 
     const handleSubmit = form.handleSubmit(async (data) => {
-        try {
-            const Api = await fetch(
-                apiUrl + "/login",
-                {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        "username": data.username,
-                        "password": data.password
-                    })
-                });
+        console.log(data)
 
-
-            let apiResponse = await Api.json();
-
-            if (apiResponse.status_code === 202) {
-                // Armazenar o token no localStorage
-                localStorage.setItem('token', apiResponse.token);
-
-                // Exibir toast de sucesso
-                toast({
-                    title: "Login bem-sucedido",
-                    description: "Você será redirecionado em breve...",
-                });
-
-                // Redirecionar após um pequeno delay para que o toast apareça
-                setTimeout(() => {
-                    router.push('/app');
-                }, 2000); // 2 segundos de delay antes do redirecionamento
-            } else {
-                // Tratar erro de login e mostrar toast de erro
-                toast({
-                    title: "Erro no login",
-                    description: "Usuário ou senha incorretos.",
-                    variant: "destructive", // Variante para exibir como erro
-                });
-            }
-
-        } catch (error) {
-            console.error('Erro ao tentar logar', error);
-
-            // Mostrar um toast de erro genérico
-            toast({
-                title: "Erro no login",
-                description: "Ocorreu um erro. Tente novamente.",
-                variant: "destructive",
-            });
-        }
-
-
+        signIn("credentials", {
+            ...data,
+            callbackUrl: '/app'
+        })
 
     });
 
@@ -112,6 +74,7 @@ export function AuthForm() {
                         </Button>
                     </form>
                 </div>
+                {error === 'CredentialsSignin' && (<div>Erro no login</div>)}
             </div>
             <Toaster />
         </main>

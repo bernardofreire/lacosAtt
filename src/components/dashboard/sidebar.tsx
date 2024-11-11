@@ -23,6 +23,7 @@ import {
   Shield
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { signOut } from "next-auth/react"
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/app" },
@@ -60,7 +61,7 @@ export default function Sidebar() {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Sair</span>
+              <span onClick={() => signOut()}>Sair</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

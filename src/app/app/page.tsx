@@ -2,11 +2,19 @@ import Chart from "@/components/dashboard/chart";
 import RecentActivity from "@/components/dashboard/recentActivity";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, MonitorCheck, Users } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-export default function Page() {
+export default async function Page() {
+    const session = await getServerSession()
+
+    if(!session){
+        redirect("/auth")
+    }
+
     return (
         <main className="sm:ml-14 p-4">
-            <h1 className="text-[12px] py-6 sm:text-sm text-gray-600">Seja Bem vindo, <span className="font-semibold">John Doe</span> </h1>
+            <h1 className="text-[12px] py-6 sm:text-sm text-gray-600">Seja Bem vindo, <span className="font-semibold">{session?.user?.name}</span> </h1>
 
             <section className="grid grid-cols-2 gap-4">
                 <Card>
