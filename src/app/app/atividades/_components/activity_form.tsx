@@ -6,9 +6,10 @@ import { Plus, Search, MoreHorizontal, Edit, Trash2, Activity } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow} from "@/components/ui/table";
-import {Dialog,DialogContent,DialogFooter,DialogHeader,DialogTitle,DialogDescription,DialogTrigger} from "@/components/ui/dialog";
-import {DropdownMenu,DropdownMenuContent,DropdownMenuItem,DropdownMenuLabel,DropdownMenuSeparator,DropdownMenuTrigger,
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import {
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 import { TimePicker } from 'antd';
@@ -25,7 +26,7 @@ interface Activity {
 }
 
 type ActivityField = {
-    name: string;
+    name: keyof Activity;  // Garantir que name seja uma chave válida de Activity
     label: string;
     type: string;
     required: boolean;
@@ -35,9 +36,9 @@ type ActivityField = {
 
 // Campos do dialog para criar/editar atividade
 const activityFields: ActivityField[] = [
-    { name: "activityName", label: "Nome Atividade", type: "text", required: true },
-    { name: "activityStart", label: "Hora Inicio", type: "tex", required: true },
-    { name: "activityEnd", label: "Hora Final", type: "select", required: true },
+    { name: "name", label: "Nome Atividade", type: "text", required: true },
+    { name: "hour_start", label: "Hora Inicio", type: "text", required: true },
+    { name: "hour_end", label: "Hora Final", type: "text", required: true },
 ];
 
 // type ErrorState = {
@@ -45,11 +46,15 @@ const activityFields: ActivityField[] = [
 // };
 
 export default function ActivitiesDashboard() {
+    // Armazena todas as atividades
     const [atividades, setAtividades] = useState<Activity[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    // Usado para filtrar as atividades na tabela
     const [searchTerm, setSearchTerm] = useState<string>("");
+    // Verifica se é para habilitar o dialogo de adicionar atividade
     const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
+
     const [newActivity, setNewActivity] = useState<Partial<Activity>>({});
+    const [errors, setErrors] = useState<{ [key: string]: string | null }>({});  // Ajustado para ser um objeto de erros
 
 
     // Carregar todas as atividades.
@@ -63,17 +68,17 @@ export default function ActivitiesDashboard() {
                 if (Array.isArray(response.data)) {
                     setAtividades(response.data);
                 } else {
-                    setError("Os dados retornados não são uma lista de atividades");
+                    setErrors("Os dados retornados não são uma lista de atividades");
                 }
             } catch (err) {
-                setError("Erro ao carregar as atividades");
+                setErrors("Erro ao carregar as atividades");
                 console.error("Erro ao buscar atividades:", err);
             }
         };
 
         fetchData();
     }, []);
-    
+
     // Para filtrar no input de pesquisa
     const filteredActivities = atividades.filter(
         (activity) =>
@@ -81,30 +86,24 @@ export default function ActivitiesDashboard() {
     );
 
 
-    // const [editingActivity, setEditingActivity] = useState<Partial<Activity> | null>(null);
-    // const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
 
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = event.target;
 
-    // const handleTimeChange = (time: Dayjs, timeString: string | string[]) => {
-    //     const schedule = Array.isArray(timeString) ? timeString[0] : timeString;
-    //     setEditingActivity((prev) => ({ ...prev ?? {}, activitySchedule: schedule }));
-    // };
+        // Atualiza o valor da nova atividade
+        setNewActivity((prevActivity) => ({
+            ...prevActivity,
+            [name]: value,
+        }));
 
-    // const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    //     const { name, value } = event.target;
-    //     setNewActivity((prevActivity) => ({
-    //         ...prevActivity,
-    //         [name]: value,
-    //     }));
-
-    //     const field = activityFields.find(field => field.name === name);
-
-    //     if (field?.required && value.trim() === '') {
-    //         setErrors(prev => ({ ...prev, [name]: 'This field is required' }));
-    //     } else {
-    //         setErrors(prev => ({ ...prev, [name]: null }));
-    //     }
-    // };
+        // Validação do campo
+        const field = activityFields.find(field => field.name === name);
+        if (field?.required && value.trim() === '') {
+            setErrors((prevErrors) => ({ ...prevErrors, [name]: `${field.label} é obrigatório` }));
+        } else {
+            setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
+        }
+    };
 
     // const validateActivity = (activity: Partial<Activity>) => {
     //     const activityErrors: ErrorState = {};
@@ -154,47 +153,24 @@ export default function ActivitiesDashboard() {
     //     setErrors({});
     // };
 
-    const renderActivityForm = (activity: Activity) => (
+    const renderActivityForm = () => (
         <div>
-            {/* {activityFields.map((field) => (
-                <div key={field.name} className="mb-4">
-                    <label className="block text-sm font-medium">{field.label}</label>
-                    {field.type === "select" ? (
-                        <Select
-                            value={activity[field.name]}
-                            onValueChange={(value: string) => handleInputChange({ target: { name: field.name, value } } as ChangeEvent<HTMLInputElement>)}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {field.options!.map(option => (
-                                    <SelectItem key={option} value={option}>
-                                        {option}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    ) : field.type === "time" ? (
-                        <TimePicker
-                            defaultValue={dayjs(activity[field.name], 'HH:mm')}
-                            format='HH:mm'
-                            onChange={handleTimeChange}
-                            className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
-                        />
-                    ) : (
+            {activityFields
+                .filter(field => field.type === "text") // Filtra apenas os campos do tipo "text"
+                .map((field) => (
+                    <div key={field.name} className="mb-4">
+                        <label className="block text-sm font-medium">{field.label}</label>
                         <Input
                             type={field.type}
                             name={field.name}
-                            value={newActivity[field.name] || ""}
+                            value={newActivity[field.name as keyof typeof newActivity] || ""}
                             onChange={handleInputChange}
                             placeholder={field.label}
-                            className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
+                            className={`mt-1 ${errors[field.name as keyof typeof errors] ? "border-red-500" : ""}`}
                         />
-                    )}
-                    {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
-                </div>
-            ))} */}
+                        {errors[field.name as keyof typeof errors] && <p className="text-red-500 text-sm">{errors[field.name as keyof typeof errors]}</p>}
+                    </div>
+                ))}
         </div>
     );
 
@@ -237,8 +213,8 @@ export default function ActivitiesDashboard() {
                                 Enter the details of the new activity here.
                             </DialogDescription>
                         </DialogHeader>
-                        {/* {renderActivityForm(newActivity)}
-                        <DialogFooter>
+                        {renderActivityForm()}
+                        {/* <DialogFooter>
                             <Button variant="secondary" onClick={resetNewActivity}>Cancel</Button>
                             <Button onClick={handleAddActivity}>Save</Button>
                         </DialogFooter> */}
