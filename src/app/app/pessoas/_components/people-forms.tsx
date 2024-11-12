@@ -89,7 +89,7 @@ const formSections = [
   },
 ]
 
-export default function EnhancedPeopleDashboard({ data } : {data : Array<string>}) {
+export default function EnhancedPeopleDashboard() {
   const [people, setPeople] = useState(initialPeople)
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -101,8 +101,6 @@ export default function EnhancedPeopleDashboard({ data } : {data : Array<string>
   const [emailTyping, setEmailTyping] = useState(false)
 
 //   Input para filtrar as pessoas
-
-console.log(data, "oasdsad")
 
   const filteredPeople = people.filter(
     (person) =>

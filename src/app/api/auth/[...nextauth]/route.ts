@@ -48,8 +48,11 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }) {
-            if (user && user.token) {
-                token.jwt = user.token;
+            if (user?.token) {
+                token.jwt = user.token; // Atribui o token ao JWT
+            } else if (!token.jwt) {
+                // Se não houver token, você pode adicionar uma validação extra, como gerar um novo token ou redirecionar para logout
+                token.jwt = null;
             }
             return token;
         },
@@ -58,8 +61,11 @@ export const authOptions: AuthOptions = {
             return session;
         }
     },
+    
     session: {
         strategy: 'jwt',
+        maxAge: 30 * 24 * 60 * 60, // Token válido por 30 dias (pode ser alterado)
+        updateAge: 24 * 60 * 60, // Atualiza o token a cada 24h
     },
     secret: process.env.NEXTAUTH_SECRET,
 };
