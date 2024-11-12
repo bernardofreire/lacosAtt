@@ -31,9 +31,18 @@ const navItems = [
   { icon: Activity, label: "Atividades", href: "/app/atividades" },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ userName, userEmail }: { userName: string; userEmail: string }) {
   const [activeItem, setActiveItem] = useState("Dashboard")
   const [isAdmin, setIsAdmin] = useState(true) // This should be set based on user role
+
+  const getInitials = (name: string) => {
+    const nameParts = name.split(" ");
+    return nameParts
+      .map(part => part.charAt(0).toUpperCase())
+      .join("");
+  };
+
+  const userInitials = getInitials(userName)
 
   return (
     <div className="w-64 h-screen flex flex-col">
@@ -43,11 +52,11 @@ export default function Sidebar() {
             <Button variant="ghost" className="w-full justify-start p-0 h-auto hover:bg-transparent">
               <Avatar className="h-10 w-10">
                 <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarFallback>{userInitials}</AvatarFallback>
               </Avatar>
               <div className="ml-3 text-left">
-                <div className="font-medium">John Doe</div>
-                <div className="text-sm text-muted-foreground">john@example.com</div>
+                <div className="font-medium">{userName}</div>
+                <div className="text-sm text-muted-foreground">{userEmail}</div>
               </div>
               <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
             </Button>
@@ -61,7 +70,7 @@ export default function Sidebar() {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
-              <span onClick={() => signOut()}>Sair</span>
+              <button onClick={() => signOut()}>Sair</button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

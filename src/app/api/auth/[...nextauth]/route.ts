@@ -1,8 +1,7 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from "next-auth/providers/credentials"
-import { cookies } from 'next/headers';
+import NextAuth, { AuthOptions } from 'next-auth';
+import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
     pages: {
         signIn: '/auth'
     },
@@ -10,47 +9,60 @@ const handler = NextAuth({
         CredentialsProvider({
             name: 'Credentials',
             credentials: {
-                username: {},
-                password: {}
+                username: { label: "Username", type: "text" },
+                password: { label: "Password", type: "password" }
             },
-
             async authorize(credentials, req) {
                 if (!credentials) {
                     return null;
                 }
 
-
                 try {
-                    console.log(credentials)
-                    const res = await fetch("/your/endpoint", {
+                    const res = await fetch("https://lacos-v2-2.onrender.com/login", {
                         method: 'POST',
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            identifier: credentials.username,
+                            username: credentials.username,
                             password: credentials.password,
-                        }),
-                        headers: { "Content-Type": "application/json" }
-                    })
-                    if (res.status !== 200) return null
+                        })
+                    });
+
+                    if (res.status !== 202) return null;
 
                     const authData = await res.json();
-
-                    if (!authData.jwt) return null
-
-                    cookies().set("jwt", authData.jwt)
+                    if (!authData.token) return null;
 
                     return {
-                        email: authData.user.email,
-                    }
+                        id: credentials.username,
+                        name: credentials.username,
+                        email: `${credentials.username}@example.com`,
+                        token: authData.token
+                    };
 
                 } catch (e) {
-                    console.log(e)
-                    return null
+                    console.error("Erro ao autenticar:", e);
+                    return null;
                 }
-
-
             }
         })
-    ]
-})
+    ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user && user.token) {
+                token.jwt = user.token;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            session.jwt = token.jwt as string;
+            return session;
+        }
+    },
+    session: {
+        strategy: 'jwt',
+    },
+    secret: process.env.NEXTAUTH_SECRET,
+};
 
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

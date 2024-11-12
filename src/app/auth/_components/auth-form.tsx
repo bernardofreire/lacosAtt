@@ -11,22 +11,32 @@ import { signIn } from "next-auth/react"
 
 export function AuthForm() {
     const form = useForm();
+    const router = useRouter();
+    const searchParams = useSearchParams()
+    const error = searchParams.get('error')
     // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     // const router = useRouter();
-    // const { toast } = useToast()
+    const { toast } = useToast()
 
-    const searchParams = useSearchParams()
 
-    const error = searchParams.get('error')
 
     const handleSubmit = form.handleSubmit(async (data) => {
         console.log(data)
 
-        signIn("credentials", {
+        const result = await signIn("credentials", {
+            redirect: false, 
             ...data,
             callbackUrl: '/app'
         })
-
+        
+        if (result?.error) {
+            console.error("Erro no login:", result.error);
+            // Adicione uma notificação de erro aqui
+            // Exemplo: toast.error("Erro no login. Verifique suas credenciais.");
+        } else if (result?.url) {
+            // Redireciona para a URL de callback, se o login for bem-sucedido
+            router.push(result.url);
+        }
     });
 
     return (
@@ -74,7 +84,7 @@ export function AuthForm() {
                         </Button>
                     </form>
                 </div>
-                {error === 'CredentialsSignin' && (<div>Erro no login</div>)}
+                {error === 'CredentialsSignin' && (<div>Erro no login. Verifique suas credenciais.</div>)}
             </div>
             <Toaster />
         </main>
