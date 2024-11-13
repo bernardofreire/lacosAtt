@@ -1,4 +1,5 @@
 import PartnersSidebar from "@/app/app/_components/sidebar";
+import { DataProvider } from "@/contexts/DataContext";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
@@ -20,7 +21,7 @@ export default async function Layout({ children }: PropsWithChildren) {
                 <PartnersSidebar userName={userName} userEmail={userEmail}/> {/*Sidebar */}
             </aside>
             <main className="bg-background shadow-md border border-gray-300 rounded-lg my-4 ml-4 overflow-hidden h-[calc(100vh-2rem)]">
-                {children}
+            <DataProvider>{children}</DataProvider>
             </main>
         </div>
     );
