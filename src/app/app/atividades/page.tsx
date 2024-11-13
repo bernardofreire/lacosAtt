@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import React from "react";
 import { Plus, Search, MoreHorizontal, Edit, Trash2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -36,16 +35,36 @@ const activityFields: ActivityField[] = [
 ];
 
 export default function ActivitiesDashboard() {
+
+  // Esta armazenado todas as atividades
   const { atividades, setAtividades, isLoading } = useDataContext();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+
+
+
+  // ==========================CREATE==============================
+  // Abrir dialogo para adicionar nova atividade
   const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
+  // Setar nova atividade
   const [newActivity, setNewActivity] = useState<Partial<Activity>>({});
+
+
+
+
+  // Buscar atividade usando input
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
+
+
+
+  // Filtro no input
   const filteredActivities = (atividades || [])
     .filter((activity) => activity && activity.name && activity.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
 
+
+
+  // Busca do nome da atividade na tabela
   const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
 
@@ -62,10 +81,15 @@ export default function ActivitiesDashboard() {
     }
   };
 
+
+
+
+  // ========================== Função para adicionar nova atividade==============================
+
   const handleAddActivity = async () => {
     const requiredFields = activityFields.filter((field) => field.required);
     const hasErrors = requiredFields.some((field) => !newActivity[field.name]?.toString().trim());
-  
+
     if (hasErrors) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -74,10 +98,10 @@ export default function ActivitiesDashboard() {
       }));
       return;
     }
-  
+
     try {
       const { name, hour_start, hour_end, id_period = 1 } = newActivity;
-  
+
       // Chamada para criar a atividade na API
       await AtividadeService.createActivity(
         name as string,
@@ -85,7 +109,7 @@ export default function ActivitiesDashboard() {
         hour_end as string,
         id_period
       );
-  
+
       // Após a criação, realiza a busca novamente para garantir que a lista de atividades está atualizada
       const atividadesResponse = await AtividadeService.getActivityList();
       setAtividades(atividadesResponse.data);
@@ -93,13 +117,34 @@ export default function ActivitiesDashboard() {
       // Limpa o formulário e fecha o diálogo
       setNewActivity({});
       setIsAddDialogOpen(false);
-  
+
     } catch (error) {
       console.error("Erro ao adicionar atividade:", error);
     }
-};
+  };
 
-  
+
+
+
+  // ========================== Função para deletar a atividade selecionada da tabela ==============================
+
+  const handleDelete = async (id: number) => {
+    try {
+      // Chama o serviço para deletar a atividade
+      await AtividadeService.deleteActivity(id.toString());
+
+      // Atualiza a lista de atividades
+      const atividadesResponse = await AtividadeService.getActivityList();
+      setAtividades(atividadesResponse.data);
+    } catch (error) {
+      console.error("Erro ao deletar atividade:", error);
+    }
+  };
+
+
+
+
+  // ========================== Função para renderizar os inputs dentro do dialogo de adicionar atividade ==============================
 
   const renderActivityForm = () => (
     <div>
@@ -201,15 +246,9 @@ export default function ActivitiesDashboard() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      {/* <DropdownMenuItem onClick={() => {
-                                                setEditingActivity(activity);
-                                                setIsEditDialogOpen(true);
-                                            }}>
-                                                <Edit className="mr-2 h-4 w-4" /> Edit
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(activity.id)}>
-                                                <Trash2 className="mr-2 h-4 w-4" /> Delete
-                                            </DropdownMenuItem> */}
+                      <DropdownMenuItem onClick={() => handleDelete(atividade.id_activity)}>
+                        <Trash2 className="mr-2 h-4 w-4" /> Delete
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
