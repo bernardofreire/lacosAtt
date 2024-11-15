@@ -14,6 +14,7 @@ interface Activity {
 
 interface DataContextType {
     atividades: Activity[] | null;
+    atividadesLength: number;
     isLoading: boolean;
     setAtividades: React.Dispatch<React.SetStateAction<Activity[] | null>>; // Adicionado setAtividades
 }
@@ -32,15 +33,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             try {
                 const [atividadesResponse] = await Promise.all([
                     AtividadeService.getActivityList(),
-
-                    // UserService.getUserList() // Supondo que existe um UserService
-
                 ]);
                 console.log(atividadesResponse.data.length, "ulaaaa")
 
                 setAtividades(atividadesResponse.data);
-
-                // setUsuarios(usuariosResponse.data);
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
             } finally {
@@ -51,6 +47,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchData();
     }, []);
 
+    const atividadesLength = atividades ? atividades.length : 0;
+
     useEffect(() => {
         console.log("Atividades foram atualizadas:", atividades);
       }, [atividades]);
@@ -58,7 +56,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log(atividades, "aqui atividades")
 
     return (
-        <DataContext.Provider value={{ atividades,  isLoading, setAtividades }}>
+        <DataContext.Provider value={{ atividades, atividadesLength,  isLoading, setAtividades }}>
             {children}
         </DataContext.Provider>
     );

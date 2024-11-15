@@ -3,11 +3,14 @@
 import Chart from "@/components/dashboard/chart";
 import RecentActivity from "@/components/dashboard/recentActivity";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDataContext } from "@/contexts/DataContext";
+import { useUserContext } from "@/contexts/UserContext";
 import { Activity, MonitorCheck, Users } from "lucide-react";
 
 
 export default function Dashboard({ userName }: { userName: string }) {
-    
+    const { atividadesLength, isLoading: isAtividadesLoading } = useDataContext();
+    const { usuariosLength, isLoading: isUsuariosLoading } = useUserContext();
 
     return (
         <main className="sm:ml-14 p-4">
@@ -28,7 +31,9 @@ export default function Dashboard({ userName }: { userName: string }) {
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-base sm:text-lg font-bold">10</p>
+                        <p className="text-base sm:text-lg font-bold">
+                            {isUsuariosLoading ? "Carregando..." : usuariosLength}
+                        </p>
                     </CardContent>
 
                 </Card>
@@ -47,7 +52,9 @@ export default function Dashboard({ userName }: { userName: string }) {
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-base sm:text-lg font-bold">4</p>
+                        <p className="text-base sm:text-lg font-bold">
+                            {isAtividadesLoading ? "Carregando..." : atividadesLength}
+                        </p>
                     </CardContent>
                 </Card>
 

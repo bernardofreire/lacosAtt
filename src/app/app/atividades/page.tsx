@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent } from "react";
 import React from "react";
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Activity } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Trash2, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -173,7 +173,7 @@ export default function ActivitiesDashboard() {
         <CardHeader>
           <div className="flex items-center justify-center">
             <CardTitle className="text-lg sm:text-xl text-gray-800 select-none">
-              Activities Dashboard
+              Gerenciar Atividades
             </CardTitle>
             <Activity className="ml-auto w-4 h-4" />
           </div>

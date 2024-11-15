@@ -3,25 +3,11 @@
 import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import Image from 'next/image';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Home,
-  Users,
-  Activity,
-  Settings,
-  LogOut,
-  ChevronDown,
-  Shield
-} from "lucide-react"
+import { Home, Users, Activity, Settings, LogOut, ChevronDown, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "next-auth/react"
 
@@ -46,35 +32,16 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
 
   return (
     <div className="w-64 h-screen flex flex-col">
-      <div className="p-4 mt-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start p-0 h-auto hover:bg-transparent">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                <AvatarFallback>{userInitials}</AvatarFallback>
-              </Avatar>
-              <div className="ml-3 text-left">
-                <div className="font-medium">{userName}</div>
-                <div className="text-sm text-muted-foreground">{userEmail}</div>
-              </div>
-              <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Configurações</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              <button onClick={() => signOut()}>Sair</button>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="mb-4 md:mb-0 pl-4 pt-4">
+        <Image
+          src="/images/logo.svg"
+          alt="Logo"
+          width={200}
+          height={200}
+          draggable={false}
+        />
       </div>
+
       <ScrollArea className="space-y-12 flex-1">
         <nav className="space-y-1 px-2">
           {navItems.map((item) => (
@@ -113,15 +80,34 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
           )}
         </nav>
       </ScrollArea>
-      <div className="mt-auto p-4 border-t">
-        <Button
-          variant="ghost"
-          className="w-full justify-start"
-          onClick={() => setActiveItem("Settings")}
-        >
-          <Settings className="mr-2 h-4 w-4" />
-          Configurações
-        </Button>
+      <div className="mt-auto p-4 border-t mb-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="w-full justify-start p-0 h-auto hover:bg-transparent">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                <AvatarFallback>{userInitials}</AvatarFallback>
+              </Avatar>
+              <div className="ml-3 text-left">
+                <div className="font-medium">{userName}</div>
+                <div className="text-sm text-muted-foreground">{userEmail}</div>
+              </div>
+              <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Configurações</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <LogOut className="mr-2 h-4 w-4" />
+              <button onClick={() => signOut()}>Sair</button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )
