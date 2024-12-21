@@ -41,7 +41,6 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
           draggable={false}
         />
       </div>
-
       <ScrollArea className="space-y-12 flex-1">
         <nav className="space-y-1 px-2">
           {navItems.map((item) => (
@@ -52,7 +51,7 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
                 className={cn(
                   "w-full justify-start",
                   activeItem === item.label
-                    ? "bg-primary text-white hover:bg-foreground hover:text-white"
+                    ? "bg-purple-800 text-white hover:bg-gray-800 hover:text-white"
                     : "text-muted-foreground hover:bg-gray-100"
                 )}
                 onClick={() => setActiveItem(item.label)}

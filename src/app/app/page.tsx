@@ -5,9 +5,9 @@ import Dashboard from "./_components/theme-provider";
 export default async function Page() {
     const session = await getServerSession();
 
-    if (!session) {
-        redirect("/auth");
-    }
+    // if (!session) {
+    //     redirect("/auth");
+    // }
 
     const userName = session?.user?.name || "Usuário";
     
