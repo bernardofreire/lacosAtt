@@ -4,7 +4,7 @@ export const AdminServices = {
 
     // Registrar usuário
     registerUser: async (username: string, password: string) => {
-        const response = await fetch("https://lacos-v2-2.onrender.com/register", {
+        const response = await fetch("https://lacos-v2.fly.dev/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const AdminServices = {
 
     // Deletar usuário
     deleteUser: async (idUser: string) => {
-        const response = await fetch(`https://lacos-v2-2.onrender.com/user/delete/${idUser}`, {
+        const response = await fetch(`https://lacos-v2.fly.dev/user/delete/${idUser}`, {
             method: "DELETE",
         });
         return response.json();
@@ -28,7 +28,7 @@ export const AdminServices = {
 
     // Atualizar usuário
     updateUser: async (idUser: string, username: string, password: string) => {
-        const response = await fetch(`https://lacos-v2-2.onrender.com/user/update/${idUser}`, {
+        const response = await fetch(`https://lacos-v2.fly.dev/user/update/${idUser}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export const AdminServices = {
     getAllUsers: async (limit: number, offset: number, q?: string) => {
         const query = new URLSearchParams({ limit: limit.toString(), offset: offset.toString() });
         if (q) query.append("q", q);
-        const response = await fetch(`https://lacos-v2-2.onrender.com/user/get/?${query}`);
+        const response = await fetch(`https://lacos-v2.fly.dev/user/get/?${query}`);
         return response.json();
     },
 
@@ -52,7 +52,7 @@ export const AdminServices = {
 
     // Buscar um usuário específico
     getUser: async (idUser: string) => {
-        const response = await fetch(`https://lacos-v2-2.onrender.com/user/get/${idUser}`);
+        const response = await fetch(`https://lacos-v2.fly.dev/user/get/${idUser}`);
         return response.json();
     },
 

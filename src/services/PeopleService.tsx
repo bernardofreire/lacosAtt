@@ -1,6 +1,17 @@
+import axios from "axios";
 import { getSession } from "next-auth/react";
 
+// Configuração inicial do Axios
+const api = axios.create({
+  baseURL: "https://lacos-v2.fly.dev",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 export const PeopleService = {
+
+
   // Função para obter o token da sessão do usuário para usar nas chamadas das APIs
   getSessionToken: async () => {
     const session = await getSession();
@@ -10,118 +21,103 @@ export const PeopleService = {
     return session.jwt;
   },
 
+
+
+
   // Criar uma nova pessoa
   createPerson: async (personData: any) => {
     const token = await PeopleService.getSessionToken();
 
-    const response = await fetch("https://lacos-v2-2.onrender.com/persons/create", {
-      method: "POST",
+    const response = await api.post("/persons/create", personData, {
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(personData),
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro ao criar pessoa: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
   },
+
+
+
+
 
   // Atualizar uma pessoa existente
   updatePerson: async (personData: any) => {
     const token = await PeopleService.getSessionToken();
 
-    const response = await fetch("https://lacos-v2-2.onrender.com/persons/update", {
-      method: "PATCH",
+    const response = await api.patch("/persons/update", personData, {
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(personData),
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro ao atualizar pessoa: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
   },
+
+
+
 
   // Buscar uma pessoa pelo ID
   getPersonById: async (idPerson: number) => {
     const token = await PeopleService.getSessionToken();
 
-    const response = await fetch(`https://lacos-v2-2.onrender.com/persons/get/${idPerson}`, {
-      method: "GET",
+    const response = await api.get(`/persons/get/${idPerson}`, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro ao buscar pessoa: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
   },
+
+
 
   // Deletar uma pessoa pelo ID
   deletePerson: async (idUser: number) => {
     const token = await PeopleService.getSessionToken();
 
-    const response = await fetch(`https://lacos-v2-2.onrender.com/persons/delete/${idUser}`, {
-      method: "DELETE",
+    const response = await api.delete(`/persons/delete/${idUser}`, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro ao deletar pessoa: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
   },
+
+
+
 
   // Buscar várias pessoas com filtros
   getAllPersons: async (limit: number, offset: number, q?: string) => {
     const token = await PeopleService.getSessionToken();
 
-    const query = new URLSearchParams({ limit: limit.toString(), offset: offset.toString() });
-    if (q) query.append("q", q);
+    const params: Record<string, string> = { limit: limit.toString(), offset: offset.toString() };
+    if (q) params.q = q;
 
-    const response = await fetch(`https://lacos-v2-2.onrender.com/persons/get?${query}`, {
-      method: "GET",
+    const response = await api.get("/persons/get", {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
+      params,
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro ao buscar pessoas: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
   },
+
+
+  
 
   // Ativar uma pessoa pelo ID
   activatePerson: async (idUser: number) => {
     const token = await PeopleService.getSessionToken();
 
-    const response = await fetch(`https://lacos-v2-2.onrender.com/persons/active/${idUser}`, {
-      method: "POST",
+    const response = await api.post(`/persons/active/${idUser}`, null, {
       headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Erro ao ativar pessoa: ${response.statusText}`);
-    }
-
-    return response.json();
+    return response.data;
   },
 };

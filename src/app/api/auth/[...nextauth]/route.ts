@@ -18,7 +18,7 @@ export const authOptions: AuthOptions = {
                 }
 
                 try {
-                    const res = await fetch("https://lacos-v2-2.onrender.com/login", {
+                    const res = await fetch("https://lacos-v2.fly.dev/login", {
                         method: 'POST',
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({

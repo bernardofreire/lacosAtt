@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent } from "react";
 import React from "react";
-import { Plus, Search, MoreHorizontal, Trash2, User } from "lucide-react";
+import { Plus, MoreHorizontal, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,6 +27,8 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { usePeopleContext } from "@/contexts/PeopleContext";
 import { PeopleService } from "@/services/PeopleService";
 
+import { useRouter } from "next/navigation";
+
 const steps = [
   [
     { name: "name", label: "Primeiro Nome", type: "text", required: true },
@@ -40,6 +42,7 @@ const steps = [
     { name: "address", label: "Endereço", type: "text", required: true },
     { name: "address_number", label: "Número", type: "text", required: true },
     { name: "cep", label: "CEP", type: "text", required: true },
+    { name: "birth_date", label: "Data de Nascimento", type: "text", required: true },
   ],
 ];
 
@@ -49,6 +52,8 @@ export default function PeopleDashboard() {
   const [newPerson, setNewPerson] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [currentStep, setCurrentStep] = useState(0);
+
+  const router = useRouter();
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -82,6 +87,7 @@ export default function PeopleDashboard() {
   const handleSubmit = async () => {
     if (!validateStep()) return;
     try {
+      console.log(newPerson, "oiiii")
       await PeopleService.createPerson(newPerson);
       const updatedPeople = await PeopleService.getAllPersons(10, 0);
       setPeople(updatedPeople.data);
@@ -92,6 +98,28 @@ export default function PeopleDashboard() {
       console.error("Erro ao criar pessoa:", error);
     }
   };
+
+
+
+
+
+  const handleDelete = async (id_person: number) => {
+    try {
+      await PeopleService.deletePerson(id_person);
+
+      const updatedPeople = await PeopleService.getAllPersons(10, 0);
+      setPeople(updatedPeople.data);
+    } catch (error) {
+      console.error("Erro ao deletar pessoa:", error);
+    }
+  };
+
+
+
+  const handleDetail = (person: Record<string, any>) => {
+    router.push(`/app/pessoas/detalhe/${person.id_person}?name=${encodeURIComponent(person.name)}`);
+  };
+
 
   return (
     <div className="container mx-auto p-4">
@@ -164,7 +192,7 @@ export default function PeopleDashboard() {
           </TableHeader>
           <TableBody>
             {people?.map((person) => (
-              <TableRow key={person.id_person}>
+              <TableRow key={person.id_person} onClick={() => handleDetail(person)} className="cursor-pointer">
                 <TableCell>{person.name}</TableCell>
                 <TableCell>{person.cpf}</TableCell>
                 <TableCell>{person.email}</TableCell>
@@ -178,7 +206,7 @@ export default function PeopleDashboard() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Ações</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(person.id_person)}>
                         <Trash2 className="mr-2 h-4 w-4" /> Excluir
                       </DropdownMenuItem>
                     </DropdownMenuContent>

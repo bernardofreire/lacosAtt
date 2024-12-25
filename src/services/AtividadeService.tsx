@@ -1,3 +1,4 @@
+import axios from "axios";
 import { getSession } from "next-auth/react";
 
 export const AtividadeService = {
@@ -12,60 +13,58 @@ export const AtividadeService = {
 
     // Criar uma atividade
     createActivity: async (name: string, hour_start: string, hour_end: string, id_period: number) => {
-        // Token para a autenticação
         const token = await AtividadeService.getSessionToken();
-        
-        const response = await fetch("https://lacos-v2-2.onrender.com/activityList/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({ name, hour_start, hour_end, id_period }),
-        });
-        return response.json();
+
+        const response = await axios.post(
+            "https://lacos-v2.fly.dev/activityList/create",
+            { name, hour_start, hour_end, id_period },
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
     },
 
     // Buscar a lista de atividades
     getActivityList: async () => {
-        // Token para a autenticação
         const token = await AtividadeService.getSessionToken();
 
-        const response = await fetch("https://lacos-v2-2.onrender.com/activityList/get", {
+        const response = await axios.get("https://lacos-v2.fly.dev/activityList/get", {
             headers: {
                 "Authorization": `Bearer ${token}`,
             },
         });
-        return response.json();
+        return response.data;
     },
 
     // Deletar uma atividade da lista
     deleteActivity: async (idActivity: string) => {
-        // Token para a autenticação
         const token = await AtividadeService.getSessionToken();
 
-        const response = await fetch(`https://lacos-v2-2.onrender.com/activityList/delete/${idActivity}`, {
-            method: "DELETE",
+        const response = await axios.delete(`https://lacos-v2.fly.dev/activityList/delete/${idActivity}`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
             },
         });
-        return response.json();
+        return response.data;
     },
 
     // Linkar uma atividade a uma pessoa
     linkActivityToPerson: async (id_person: number, id_activity: number) => {
-        // Token para a autenticação
         const token = await AtividadeService.getSessionToken();
 
-        const response = await fetch("https://lacos-v2-2.onrender.com/activities/action/link", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({ id_person, id_activity }),
-        });
-        return response.json();
+        const response = await axios.post(
+            "https://lacos-v2.fly.dev/activities/action/link",
+            { id_person, id_activity },
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data;
     },
 };
