@@ -146,7 +146,10 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
   return (
     <div className="container mx-auto p-6 max-w-3xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Detalhes da Pessoa</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Informações de <span className="text-purple-700">{person.data.name}</span>
+        </h1>
+
         {!isEditing ? (
           <Button onClick={() => setIsEditing(true)}>
             <Edit2 className="mr-2 h-4 w-4" /> Editar

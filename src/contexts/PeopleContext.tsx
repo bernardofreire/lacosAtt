@@ -40,6 +40,7 @@ interface Person {
 interface PeopleContextType {
   people: Person[] | null;
   peopleLength: number;
+  activePeopleCount: number; 
   isLoading: boolean;
   setPeople: React.Dispatch<React.SetStateAction<Person[] | null>>;
 }
@@ -54,6 +55,7 @@ export const PeopleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const fetchPeople = async () => {
       try {
         const response = await PeopleService.getAllPersons(10, 0); // Ajuste os limites conforme necessário
+        console.log(response.data.length, "reasasasa")
         setPeople(response.data);
       } catch (error) {
         console.error("Erro ao carregar pessoas:", error);
@@ -65,6 +67,8 @@ export const PeopleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     fetchPeople();
   }, []);
 
+  const activePeopleCount = people ? people.filter(person => person.active === "Y").length : 0;
+
   const peopleLength = people ? people.length : 0;
 
   useEffect(() => {
@@ -72,7 +76,7 @@ export const PeopleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [people]);
 
   return (
-    <PeopleContext.Provider value={{ people, peopleLength, isLoading, setPeople }}>
+    <PeopleContext.Provider value={{ people,activePeopleCount, peopleLength, isLoading, setPeople }}>
       {children}
     </PeopleContext.Provider>
   );

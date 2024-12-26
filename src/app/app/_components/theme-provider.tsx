@@ -4,12 +4,14 @@ import Chart from "@/components/dashboard/chart";
 import RecentActivity from "@/components/dashboard/recentActivity";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDataContext } from "@/contexts/DataContext";
+import { usePeopleContext } from "@/contexts/PeopleContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { Activity, MonitorCheck, Users } from "lucide-react";
 
 
 export default function Dashboard({ userName }: { userName: string }) {
     const { atividadesLength, isLoading: isAtividadesLoading } = useDataContext();
+    const { peopleLength, activePeopleCount, isLoading: isPeopleLoading } = usePeopleContext();
     const { usuariosLength, isLoading: isUsuariosLoading } = useUserContext();
 
     return (
@@ -32,7 +34,7 @@ export default function Dashboard({ userName }: { userName: string }) {
 
                     <CardContent>
                         <p className="text-base sm:text-lg font-bold">
-                            {isUsuariosLoading ? "Carregando..." : usuariosLength}
+                            {isPeopleLoading ? "Carregando..." : peopleLength}
                         </p>
                     </CardContent>
 
@@ -72,7 +74,9 @@ export default function Dashboard({ userName }: { userName: string }) {
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-base sm:text-lg font-bold">2</p>
+                        <p className="text-base sm:text-lg font-bold">
+                            {isUsuariosLoading ? "Carregando..." : usuariosLength}
+                        </p>
                     </CardContent>
                 </Card>
 
@@ -90,7 +94,9 @@ export default function Dashboard({ userName }: { userName: string }) {
                     </CardHeader>
 
                     <CardContent>
-                        <p className="text-base sm:text-lg font-bold">7</p>
+                        <p className="text-base sm:text-lg font-bold">
+                            {isPeopleLoading ? "Carregando..." : activePeopleCount}
+                        </p>
                     </CardContent>
                 </Card>
             </section>
