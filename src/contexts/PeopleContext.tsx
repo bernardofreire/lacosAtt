@@ -6,11 +6,11 @@ import { PeopleService } from "@/services/PeopleService";
 interface ResponsiblePerson {
   id_person: number;
   id_responsible: number;
-  name: string;
-  relationship: string;
-  rg: string;
-  cpf: string;
-  cell_phone: string;
+  res_name: string;
+  res_relationship: string;
+  res_rg: string;
+  res_cpf: string;
+  res_cell_phone: string;
 }
 
 interface Person {

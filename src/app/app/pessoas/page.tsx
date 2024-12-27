@@ -1,5 +1,6 @@
 "use client";
 
+import CircularProgress from '@mui/material/CircularProgress';
 import { useState, ChangeEvent } from "react";
 import React from "react";
 import { Plus, MoreHorizontal, Trash2, User } from "lucide-react";
@@ -36,15 +37,21 @@ const steps = [
   ],
   [
     { name: "email", label: "E-mail", type: "email", required: true },
+    { name: "rg", label: "RG", type: "text", required: true },
     { name: "cpf", label: "CPF", type: "text", required: true },
+    { name: "blood_type", label: "Tipo Sanguíneo", type: "text", required: true },
+    { name: "birth_date", label: "Data de Nascimento", type: "date", required: true },
   ],
   [
     { name: "address", label: "Endereço", type: "text", required: true },
     { name: "address_number", label: "Número", type: "text", required: true },
     { name: "cep", label: "CEP", type: "text", required: true },
-    { name: "birth_date", label: "Data de Nascimento", type: "text", required: true },
   ],
 ];
+
+
+
+
 
 export default function PeopleDashboard() {
   const { people, setPeople, isLoading } = usePeopleContext();
@@ -179,7 +186,9 @@ export default function PeopleDashboard() {
         </Dialog>
       </div>
       {isLoading ? (
-        <p>Carregando pessoas...</p>
+        <div className="flex items-center justify-center py-4">
+          <CircularProgress size={40} sx={{ color: '#6a0dad' }} thickness={5} />
+        </div>
       ) : (
         <Table>
           <TableHeader>
@@ -187,6 +196,7 @@ export default function PeopleDashboard() {
               <TableHead>Nome</TableHead>
               <TableHead>CPF</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -196,6 +206,7 @@ export default function PeopleDashboard() {
                 <TableCell>{person.name}</TableCell>
                 <TableCell>{person.cpf}</TableCell>
                 <TableCell>{person.email}</TableCell>
+                <TableCell>{person.active === "Y" ? "Ativo" : "Inativo"}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

@@ -118,6 +118,14 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
     }
   };
 
+  const handleCheckboxChange = (checked: boolean) => {
+    if (person) {
+      setPerson((prev) =>
+        prev ? { ...prev, data: { ...prev.data, active: checked ? "Y" : "N" } } : null
+      );
+    }
+  };
+
 
   const handleCancel = () => {
     setPerson(originalPerson)
@@ -166,7 +174,25 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
         )}
       </div>
 
+
       <div className="bg-white shadow-md rounded-lg p-6 space-y-6">
+
+        <div className="flex items-center space-x-2">
+          <input
+            id="active"
+            name="active"
+            type="checkbox"
+            checked={person.data.active === "Y"}
+            onChange={(e) => handleCheckboxChange(e.target.checked)}
+            disabled={!isEditing}
+            className="h-4 w-4 rounded border-gray-300 focus:ring-2 focus:ring-purple-600"
+          />
+          <label htmlFor="active" className="text-sm font-medium text-gray-700">
+            {person.data.active === "Y" ? "Ativo" : "Inativo"}
+          </label>
+        </div>
+
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nome Completo</Label>

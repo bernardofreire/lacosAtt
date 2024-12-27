@@ -7,6 +7,8 @@ import { useDataContext } from "@/contexts/DataContext";
 import { usePeopleContext } from "@/contexts/PeopleContext";
 import { useUserContext } from "@/contexts/UserContext";
 import { Activity, MonitorCheck, Users } from "lucide-react";
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 export default function Dashboard({ userName }: { userName: string }) {
@@ -34,7 +36,7 @@ export default function Dashboard({ userName }: { userName: string }) {
 
                     <CardContent>
                         <p className="text-base sm:text-lg font-bold">
-                            {isPeopleLoading ? "Carregando..." : peopleLength}
+                            {isPeopleLoading ? <CircularProgress size={20} sx={{ color: '#6a0dad' }} thickness={5} /> : peopleLength}
                         </p>
                     </CardContent>
 
@@ -55,7 +57,9 @@ export default function Dashboard({ userName }: { userName: string }) {
 
                     <CardContent>
                         <p className="text-base sm:text-lg font-bold">
-                            {isAtividadesLoading ? "Carregando..." : atividadesLength}
+                            {isAtividadesLoading ? (
+                                <CircularProgress size={20} sx={{ color: '#6a0dad' }} thickness={5} />
+                            ) : atividadesLength}
                         </p>
                     </CardContent>
                 </Card>
@@ -75,7 +79,7 @@ export default function Dashboard({ userName }: { userName: string }) {
 
                     <CardContent>
                         <p className="text-base sm:text-lg font-bold">
-                            {isUsuariosLoading ? "Carregando..." : usuariosLength}
+                            {isUsuariosLoading ? <CircularProgress size={20} sx={{ color: '#6a0dad' }} thickness={5} /> : usuariosLength}
                         </p>
                     </CardContent>
                 </Card>
@@ -95,7 +99,7 @@ export default function Dashboard({ userName }: { userName: string }) {
 
                     <CardContent>
                         <p className="text-base sm:text-lg font-bold">
-                            {isPeopleLoading ? "Carregando..." : activePeopleCount}
+                            {isPeopleLoading ? <CircularProgress size={20} sx={{ color: '#6a0dad' }} thickness={5} /> : activePeopleCount}
                         </p>
                     </CardContent>
                 </Card>
