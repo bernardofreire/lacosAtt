@@ -5,19 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { Info, Save, X, Edit2 } from 'lucide-react'
+import { ChevronLeft, Save, X, Edit2 } from 'lucide-react'
 import { PeopleService } from "@/services/PeopleService"
 import { usePeopleContext } from '@/contexts/PeopleContext'
 
-interface ResponsiblePerson {
-  id_person: number
-  id_responsible: number
-  name: string
-  relationship: string
-  rg: string
-  cpf: string
-  cell_phone: string
-}
+
 
 interface Person {
   data: {
@@ -41,7 +33,15 @@ interface Person {
     email: string
     current_age: number
     active: string
-    responsible_person: ResponsiblePerson
+    responsible_person: {
+      id_person: number
+      id_responsible: number
+      name: string
+      relationship: string
+      rg: string
+      cpf: string
+      cell_phone: string
+    }
   }
 }
 
@@ -152,26 +152,36 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-3xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Informações de <span className="text-purple-700">{person.data.name}</span>
-        </h1>
+    <div className="container mx-auto p-6 max-w-3xl pb-52">
+      <div className="sticky top-0 bg-white z-10 p-4">
+        <div className="flex justify-between items-center mb-6">
 
-        {!isEditing ? (
-          <Button onClick={() => setIsEditing(true)}>
-            <Edit2 className="mr-2 h-4 w-4" /> Editar
+          {/* Botão de Voltar */}
+          <Button onClick={() => window.history.back()} variant="ghost">
+            <ChevronLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
-        ) : (
-          <div className="space-x-2">
-            <Button onClick={handleSave} variant="default">
-              <Save className="mr-2 h-4 w-4" /> Salvar
+          
+
+          <h1 className="text-2xl font-bold text-gray-900">
+            Informações de <span className="text-purple-700">{person.data.name}</span>
+          </h1>
+
+
+          {!isEditing ? (
+            <Button onClick={() => setIsEditing(true)}>
+              <Edit2 className="mr-2 h-4 w-4" /> Editar
             </Button>
-            <Button onClick={handleCancel} variant="outline">
-              <X className="mr-2 h-4 w-4" /> Cancelar
-            </Button>
-          </div>
-        )}
+          ) : (
+            <div className="space-x-2">
+              <Button onClick={handleSave} variant="default">
+                <Save className="mr-2 h-4 w-4" /> Salvar
+              </Button>
+              <Button onClick={handleCancel} variant="outline">
+                <X className="mr-2 h-4 w-4" /> Cancelar
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
 
@@ -192,7 +202,9 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
           </label>
         </div>
 
+        <Separator />
 
+        <h2 className="text-xl font-semibold">Informações pessoais</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nome Completo</Label>
@@ -218,10 +230,94 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
           </div>
         </div>
 
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            value={person.data.email || ''}
+            onChange={handleInputChange}
+            placeholder="Email"
+            disabled={!isEditing}
+          />
+        </div>
+
+        <Separator />
+
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Documentação</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="rg">RG</Label>
+              <Input
+                id="rg"
+                name="rg"
+                value={person.data.rg || ''}
+                onChange={handleInputChange}
+                placeholder="RG"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cpf">CPF</Label>
+              <Input
+                id="cpf"
+                name="cpf"
+                value={person.data.cpf || ''}
+                onChange={handleInputChange}
+                placeholder="CPF"
+                disabled={!isEditing}
+              />
+            </div>
+          </div>
+
+
+          <div className="space-y-2">
+            <Label htmlFor="blood_type">Tipo Sanguíneo</Label>
+            <Input
+              id="blood_type"
+              name="blood_type"
+              value={person.data.blood_type || ''}
+              onChange={handleInputChange}
+              placeholder="Tipo Sanguineo"
+              disabled={!isEditing}
+            />
+          </div>
+
+        </div>
+
+
         <Separator />
 
         <div className="space-y-2">
           <h2 className="text-xl font-semibold">Endereço</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="cep">CEP</Label>
+              <Input
+                id="cep"
+                name="cep"
+                value={person.data.cep || ''}
+                onChange={handleInputChange}
+                placeholder="Número"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="city">Cidade</Label>
+              <Input
+                id="city"
+                name="city"
+                value={person.data.city || ''}
+                onChange={handleInputChange}
+                placeholder="Rua"
+                disabled={!isEditing}
+              />
+            </div>
+          </div>
+
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="address">Rua</Label>
@@ -254,6 +350,17 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
           <h2 className="text-xl font-semibold">Contato</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
+              <Label htmlFor="home_phone">Telefone de casa</Label>
+              <Input
+                id="home_phone"
+                name="home_phone"
+                value={person.data.home_phone || ''}
+                onChange={handleInputChange}
+                placeholder="Telefone de casa"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="cell_phone">Celular</Label>
               <Input
                 id="cell_phone"
@@ -264,20 +371,136 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
                 disabled={!isEditing}
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="contact_phone">Telefone de contato</Label>
+            <Input
+              id="contact_phone"
+              name="contact_phone"
+              value={person.data.contact_phone || ''}
+              onChange={handleInputChange}
+              placeholder="Telefone de contato"
+              disabled={!isEditing}
+            />
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Informações Complementares</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="cad_unico">Cadastro único</Label>
               <Input
-                id="email"
-                name="email"
-                type="email"
-                value={person.data.email || ''}
+                id="cad_unico"
+                name="cad_unico"
+                value={person.data.cad_unico || ''}
                 onChange={handleInputChange}
-                placeholder="E-mail"
+                placeholder="Cadastro único"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="nis">NIS</Label>
+              <Input
+                id="nis"
+                name="nis"
+                value={person.data.nis || ''}
+                onChange={handleInputChange}
+                placeholder="NIS"
                 disabled={!isEditing}
               />
             </div>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="school">Escola</Label>
+            <Input
+              id="school"
+              name="school"
+              value={person.data.school || ''}
+              onChange={handleInputChange}
+              placeholder="Escola"
+              disabled={!isEditing}
+            />
+          </div>
         </div>
+
+
+
+        <Separator />
+
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Dados do Responsável</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nome do Responsável</Label>
+              <Input
+                id="name"
+                name="name"
+                value={person.data.responsible_person.name || ''}
+                onChange={handleInputChange}
+                placeholder="Nome do Responsável"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="relationship">Estado civil</Label>
+              <Input
+                id="relationship"
+                name="relationship"
+                value={person.data.responsible_person.relationship || ''}
+                onChange={handleInputChange}
+                placeholder="Estado civil"
+                disabled={!isEditing}
+              />
+            </div>
+          </div>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="rg">RG do Responsável</Label>
+              <Input
+                id="rg"
+                name="rg"
+                value={person.data.responsible_person.rg || ''}
+                onChange={handleInputChange}
+                placeholder="RG do Responsáve"
+                disabled={!isEditing}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="cpf">CPF do Responsável</Label>
+              <Input
+                id="cpf"
+                name="cpf"
+                value={person.data.responsible_person.cpf || ''}
+                onChange={handleInputChange}
+                placeholder="CPF do Responsável"
+                disabled={!isEditing}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cell_phone">Celular do Responsável</Label>
+            <Input
+              id="cell_phone"
+              name="cell_phone"
+              value={person.data.responsible_person.cell_phone || ''}
+              onChange={handleInputChange}
+              placeholder="Celular do Responsável"
+              disabled={!isEditing}
+            />
+          </div>
+        </div>
+
+
+
+
       </div>
     </div>
   )

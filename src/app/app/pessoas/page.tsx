@@ -34,18 +34,36 @@ const steps = [
   [
     { name: "name", label: "Primeiro Nome", type: "text", required: true },
     { name: "last_name", label: "Último Nome", type: "text", required: true },
-  ],
-  [
     { name: "email", label: "E-mail", type: "email", required: true },
-    { name: "rg", label: "RG", type: "text", required: true },
-    { name: "cpf", label: "CPF", type: "text", required: true },
-    { name: "blood_type", label: "Tipo Sanguíneo", type: "text", required: true },
     { name: "birth_date", label: "Data de Nascimento", type: "date", required: true },
   ],
   [
+    { name: "rg", label: "RG", type: "text", required: true },
+    { name: "cpf", label: "CPF", type: "text", required: true },
+    { name: "blood_type", label: "Tipo Sanguíneo", type: "text", required: true },
+  ],
+  [
+    { name: "city", label: "Cidade", type: "text", required: true },
     { name: "address", label: "Endereço", type: "text", required: true },
     { name: "address_number", label: "Número", type: "text", required: true },
     { name: "cep", label: "CEP", type: "text", required: true },
+  ],
+  [
+    { name: "home_phone", label: "Telefone", type: "text", required: true },
+    { name: "cell_phone", label: "Celular", type: "text", required: true },
+    { name: "contact_phone", label: "Telefone de contato", type: "text", required: true },
+  ],
+  [
+    { name: "cad_unico", label: "Cadastro único", type: "text", required: true },
+    { name: "nis", label: "NIS", type: "text", required: true },
+    { name: "school", label: "Escola", type: "text", required: true },
+  ],
+  [
+    { name: "res_name", label: "Nome do Responsável", type: "text", required: true },
+    { name: "res_relationship", label: "Estado civil", type: "text", required: true },
+    { name: "res_rg", label: "RG do Responsável", type: "text", required: true },
+    { name: "res_cpf", label: "CPF do Responsável", type: "text", required: true },
+    { name: "res_cell_phone", label: "Celular do Responsável", type: "text", required: true },
   ],
 ];
 
