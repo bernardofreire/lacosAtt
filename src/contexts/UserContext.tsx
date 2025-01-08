@@ -22,6 +22,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log("Usuarios aqui")
     const fetchUsers = async () => {
       try {
         const response = await AdminServices.getAllUsers(100, 0); // Ajuste o limite e o offset conforme necessário

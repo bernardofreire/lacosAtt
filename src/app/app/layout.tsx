@@ -10,9 +10,9 @@ export default async function Layout({ children }: PropsWithChildren) {
 
     const session = await getServerSession();
 
-    // if (!session) {
-    //     redirect("/auth");
-    // }
+    if (!session) {
+        redirect("/auth");
+    }
 
     const userName = session?.user?.name || "Usuário";
     const userEmail = session?.user?.email || "email@example.com";

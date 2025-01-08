@@ -1,42 +1,70 @@
 // APIs para usuario Admin
+import axios from "axios";
+import { getSession } from "next-auth/react";
+
+const api = axios.create({
+    baseURL: "https://lacos-v2.fly.dev",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
 
 export const AdminServices = {
 
+    // Função para obter o token da sessão do usuário para usar nas chamadas das APIs
+    getSessionToken: async () => {
+        const session = await getSession();
+        if (!session?.jwt) {
+            throw new Error("Usuário não autenticado");
+        }
+        return session.jwt;
+    },
+
+
     // Registrar usuário
-    registerUser: async (username: string, password: string) => {
-        const response = await fetch("https://lacos-v2.fly.dev/register", {
-            method: "POST",
+    registerUser: async (bodyRegisterUser: { username: string; password: string }) => {
+        const token = await AdminServices.getSessionToken();
+
+        const response = await api.post("/register", bodyRegisterUser, {
             headers: {
-                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ username, password }),
         });
-        return response.json();
+
+        return response.data;
     },
 
 
 
     // Deletar usuário
     deleteUser: async (idUser: string) => {
-        const response = await fetch(`https://lacos-v2.fly.dev/user/delete/${idUser}`, {
-            method: "DELETE",
+        const token = await AdminServices.getSessionToken();
+
+        const response = await api.delete(`/user/delete/${idUser}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         });
-        return response.json();
+
+        return response.data.data;
     },
 
 
 
     // Atualizar usuário
-    updateUser: async (idUser: string, username: string, password: string) => {
-        const response = await fetch(`https://lacos-v2.fly.dev/user/update/${idUser}`, {
-            method: "PATCH",
+    updateUser: async (idUser: number, updatedUser: any) => {
+        const token = await AdminServices.getSessionToken();
+
+        const response = await api.patch(`/user/update/${idUser}`, updatedUser, {
             headers: {
-                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ username, password }),
         });
-        return response.json();
+
+        return response.data.data;
     },
+
 
 
 
@@ -44,16 +72,36 @@ export const AdminServices = {
     getAllUsers: async (limit: number, offset: number, q?: string) => {
         const query = new URLSearchParams({ limit: limit.toString(), offset: offset.toString() });
         if (q) query.append("q", q);
-        const response = await fetch(`https://lacos-v2.fly.dev/user/get/?${query}`);
-        return response.json();
+
+
+        const token = await AdminServices.getSessionToken();
+
+        const response = await api.get(`/user/get`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log(response.data.data, "aq user")
+
+        return response.data.data;
     },
 
 
 
     // Buscar um usuário específico
-    getUser: async (idUser: string) => {
-        const response = await fetch(`https://lacos-v2.fly.dev/user/get/${idUser}`);
-        return response.json();
+    getUser: async (idUser: number) => {
+        const token = await AdminServices.getSessionToken();
+
+        const response = await api.get(`/user/get/${idUser}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log(response.data.data, "aq user")
+
+        return response.data.data;
     },
 
 };

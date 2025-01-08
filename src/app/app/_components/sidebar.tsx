@@ -89,7 +89,6 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
               </Avatar>
               <div className="ml-3 text-left">
                 <div className="font-medium">{userName}</div>
-                <div className="text-sm text-muted-foreground">{userEmail}</div>
               </div>
               <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
             </Button>
@@ -97,10 +96,10 @@ export default function Sidebar({ userName, userEmail }: { userName: string; use
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            {/* <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
               <span>Configurações</span>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
               <button onClick={() => signOut()}>Sair</button>

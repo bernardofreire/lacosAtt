@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogD
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserContext } from "@/contexts/UserContext";
+import { useRouter } from 'next/navigation'
 import { AdminServices } from "@/services/AdminService";
 
 interface User {
@@ -38,6 +39,8 @@ export default function UsersDashboard() {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
+    const router = useRouter()
+
     const filteredUsers = (usuarios || []).filter((user) =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -59,6 +62,7 @@ export default function UsersDashboard() {
     };
 
     const handleAddUser = async () => {
+        // Verificar campos obrigatórios
         const requiredFields = userFields.filter((field) => field.required);
         const hasErrors = requiredFields.some((field) => !newUser[field.name]?.toString().trim());
 
@@ -71,10 +75,16 @@ export default function UsersDashboard() {
         }
 
         try {
+            // Verificar se username e password estão definidos
             const { username, password } = newUser;
+            if (!username || !password) {
+                console.error("Username ou password não definidos");
+                return; // Não prossegue sem username e password válidos
+            }
 
-            // Chamada para criar o usuário na API
-            await AdminServices.registerUser(username as string, password as string);
+            // Criando o objeto com os dados necessários
+            const userData = { username, password };
+            await AdminServices.registerUser(userData); // Passando o objeto para o método
 
             // Após a criação, realiza a busca novamente para garantir que a lista de usuários está atualizada
             const usuariosResponse = await AdminServices.getAllUsers(100, 0);
@@ -88,18 +98,31 @@ export default function UsersDashboard() {
         }
     };
 
+
     const handleDelete = async (id: string) => {
         try {
             console.log(`Deletar usuário com ID: ${id}`);
+
+            // Remover o usuário da lista localmente
+            setUsuarios(prevUsuarios => prevUsuarios?.filter(user => user.id_user !== id) || []);
+
+            // Chama a função de exclusão da API
             await AdminServices.deleteUser(id.toString());
 
-            // Atualiza a lista de usuários
+            // Após deletar, realiza o GET para garantir que a lista de usuários está atualizada
             const usuariosResponse = await AdminServices.getAllUsers(100, 0);
-            setUsuarios(usuariosResponse.data);
+            console.log(usuariosResponse, "aqui use response")
+            // Atualiza os usuários no contexto
+            setUsuarios(usuariosResponse);
+
         } catch (error) {
             console.error("Erro ao deletar usuário:", error);
+            // Em caso de erro, você pode restaurar a lista original.
+            const usuariosResponse = await AdminServices.getAllUsers(100, 0);
+            setUsuarios(usuariosResponse.data);
         }
     };
+
 
     const renderUserForm = () => (
         <div>
@@ -119,6 +142,12 @@ export default function UsersDashboard() {
             ))}
         </div>
     );
+
+
+    const handleEditUserDetail = (user: User) => {
+        router.push(`/app/usuarios/editUser/${user.id_user}`); // Redireciona para a página de edição do usuário
+    };
+    
 
     return (
         <div className="container mx-auto p-4">
@@ -180,7 +209,11 @@ export default function UsersDashboard() {
                     </TableHeader>
                     <TableBody>
                         {filteredUsers.map((user) => (
-                            <TableRow key={user.id_user}>
+                            <TableRow
+                                key={user.id_user}
+                                onClick={() => handleEditUserDetail(user)}
+                                className="cursor-pointer"
+                            >
                                 <TableCell>{user.id_user}</TableCell>
                                 <TableCell>{user.username}</TableCell>
                                 <TableCell>
@@ -203,6 +236,7 @@ export default function UsersDashboard() {
                             </TableRow>
                         ))}
                     </TableBody>
+
                 </Table>
             )}
         </div>

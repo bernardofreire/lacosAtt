@@ -20,11 +20,11 @@ export default function Chart() {
     const chartConfig = {
         desktop: {
             label: "Desktop",
-            color: "#2563eb",
+            color: "#6a0dad",
         },
         mobile: {
             label: "Mobile",
-            color: "#60a5fa",
+            color: "#9243cc",
         },
     } satisfies ChartConfig
 
