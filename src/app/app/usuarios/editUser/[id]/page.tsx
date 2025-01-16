@@ -73,7 +73,7 @@ export default function EditUserDetails({ params }: { params: { id: string } }) 
     }
 
     return (
-        <div className="max-w-3xl mx-auto mt-8 space-y-6">
+        <div className="max-w-lg mx-auto mt-8 space-y-6">
             <Card>
                 <div className="flex space-x-4 mt-6 ml-6">
                     {/* Botão de Voltar */}
