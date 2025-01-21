@@ -1,11 +1,12 @@
 "use client";
 
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import React from "react";
 import { Plus, MoreHorizontal, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -29,6 +30,7 @@ import { usePeopleContext } from "@/contexts/PeopleContext";
 import { PeopleService } from "@/services/PeopleService";
 
 import { useRouter } from "next/navigation";
+// import { AtividadeService } from '@/services/AtividadeService';
 
 const steps = [
   [
@@ -65,6 +67,9 @@ const steps = [
     { name: "res_cpf", label: "CPF do Responsável", type: "text", required: true },
     { name: "res_cell_phone", label: "Celular do Responsável", type: "text", required: true },
   ],
+  // [
+  //   { name: "activity", label: "Atividade", type: "select", required: true },
+  // ],
 ];
 
 
@@ -77,8 +82,24 @@ export default function PeopleDashboard() {
   const [newPerson, setNewPerson] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [currentStep, setCurrentStep] = useState(0);
+  // const [activities, setActivities] = useState([]);
 
   const router = useRouter();
+
+
+  // useEffect(() => {
+  //   const fetchActivities = async () => {
+  //     try {
+  //       const data = await AtividadeService.getActivityList();
+  //       setActivities(data);
+  //     } catch (error) {
+  //       console.error("Erro ao buscar atividades:", error);
+  //     }
+  //   };
+
+  //   fetchActivities();
+  // }, []);
+
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -114,8 +135,22 @@ export default function PeopleDashboard() {
     try {
       console.log(newPerson, "oiiii")
       await PeopleService.createPerson(newPerson);
+      // const personId = personResponse.data.id_person;
+
+      // if (newPerson.activity) {
+      //   await PeopleService.linkActivityPerson({
+      //     id_person: personId,
+      //     id_activity: newPerson.activity,
+      //   });
+      // }
+
+      console.log(people, "uebaa")
+
+      // Atualiza a lista de pessoas no contexto
       const updatedPeople = await PeopleService.getAllPersons(10, 0);
       setPeople(updatedPeople.data);
+
+      // Reseta os estados
       setNewPerson({});
       setCurrentStep(0);
       setIsDialogOpen(false);
@@ -179,13 +214,34 @@ export default function PeopleDashboard() {
               {steps[currentStep].map((field) => (
                 <div key={field.name}>
                   <label className="block text-sm font-medium">{field.label}</label>
-                  <Input
-                    type={field.type}
-                    name={field.name}
-                    value={newPerson[field.name] || ""}
-                    onChange={handleInputChange}
-                    className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
-                  />
+                  {field.type === "select" ? (
+                    // <Select
+                    //   value={newPerson[field.name] || ""}
+                    //   onValueChange={(value) =>
+                    //     setNewPerson((prev) => ({ ...prev, [field.name]: value }))
+                    //   }
+                    // >
+                    //   <SelectTrigger className="mt-1 block w-full border border-gray-300 rounded-md">
+                    //     <SelectValue placeholder="Selecione uma atividade" />
+                    //   </SelectTrigger>
+                    //   <SelectContent>
+                    //     {activities.map((activity) => (
+                    //       <SelectItem key={activity.id_activity} value={activity.id_activity.toString()}>
+                    //         {activity.name}
+                    //       </SelectItem>
+                    //     ))}
+                    //   </SelectContent>
+                    // </Select>
+                    <h1>oi</h1>
+                  ) : (
+                    <Input
+                      type={field.type}
+                      name={field.name}
+                      value={newPerson[field.name] || ""}
+                      onChange={handleInputChange}
+                      className={`mt-1 ${errors[field.name] ? "border-red-500" : ""}`}
+                    />
+                  )}
                   {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
                 </div>
               ))}

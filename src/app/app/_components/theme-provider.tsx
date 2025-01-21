@@ -1,7 +1,7 @@
 "use client"
 
 import Chart from "@/components/dashboard/chart";
-import RecentActivity from "@/components/dashboard/recentActivity";
+// import RecentActivity from "@/components/dashboard/recentActivity";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDataContext } from "@/contexts/DataContext";
 import { usePeopleContext } from "@/contexts/PeopleContext";
@@ -107,7 +107,7 @@ export default function Dashboard({ userName }: { userName: string }) {
 
             <section className="mt-4 flex flex-col md:flex-row gap-4">
                 <Chart />
-                <RecentActivity />
+                {/* <RecentActivity /> */}
             </section>
         </main>)
 }

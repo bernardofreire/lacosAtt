@@ -61,12 +61,7 @@ export const authOptions: AuthOptions = {
             return session;
         }
     },
-    
-    session: {
-        strategy: 'jwt',
-        maxAge: 30 * 24 * 60 * 60, // Token válido por 30 dias (pode ser alterado)
-        updateAge: 24 * 60 * 60, // Atualiza o token a cada 24h
-    },
+
     secret: process.env.NEXTAUTH_SECRET,
 };
 

@@ -120,4 +120,17 @@ export const PeopleService = {
 
     return response.data;
   },
+
+
+  linkActivityPerson: async (activityPerson: any) => {
+    const token = await PeopleService.getSessionToken();
+    
+    const response = await api.post(`/activities/action/link`, activityPerson, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  },
 };

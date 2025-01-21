@@ -5,44 +5,48 @@ import { Input } from "@/components/ui/input";
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { signIn } from "next-auth/react"
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function AuthForm() {
     const form = useForm();
     const router = useRouter();
-    const searchParams = useSearchParams()
-    const error = searchParams.get('error')
-    // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    // const router = useRouter();
-    const { toast } = useToast()
-
-
+    const searchParams = useSearchParams();
+    const error = searchParams.get('error');
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
 
     const handleSubmit = form.handleSubmit(async (data) => {
-        console.log(data)
+        setIsLoading(true); // Inicia o carregamento
+        console.log(data);
 
         const result = await signIn("credentials", {
-            redirect: false, 
+            redirect: false,
             ...data,
             callbackUrl: '/app'
-        })
-        
+        });
+
         if (result?.error) {
             console.error("Erro no login:", result.error);
-            // Adicione uma notificação de erro aqui
-            // Exemplo: toast.error("Erro no login. Verifique suas credenciais.");
+            toast({
+                variant: "destructive",
+                title: "Erro no login",
+                description: "Verifique suas credenciais.",
+            });
         } else if (result?.url) {
-            // Redireciona para a URL de callback, se o login for bem-sucedido
-            router.push(result.url);
+            router.push(result.url); // Redireciona ao sucesso
         }
+
+        setIsLoading(false); // Finaliza o carregamento
     });
 
     return (
         <main>
             <div className="h-screen flex justify-center items-center p-4">
-                <div className="flex flex-col md:flex-row items-center justify-around  h-auto w-full max-w-3xl p-6 rounded-lg">
+                <div className="flex flex-col md:flex-row items-center justify-around h-auto w-full max-w-3xl p-6 rounded-lg">
                     <div className="mb-4 md:mb-0">
                         <Image
                             src="/images/logo.svg"
@@ -61,10 +65,9 @@ export function AuthForm() {
                             draggable={false}
                         />
                     </div>
-                    <form onSubmit={handleSubmit} className="p-6  flex flex-col justify-around h-full w-full md:w-1/2">
+                    <form onSubmit={handleSubmit} className="p-6 flex flex-col justify-around h-full w-full md:w-1/2">
                         <h1 className="mb-4">Login</h1>
                         <div className="flex flex-col space-y-4">
-                            {/* Inputs maiores e responsivos */}
                             <Input
                                 className="focus:border-purple-800 w-full py-3"
                                 type="username"
@@ -78,13 +81,21 @@ export function AuthForm() {
                                 {...form.register('password')}
                             />
                         </div>
-                        {/* Botão maior e responsivo */}
-                        <Button className="bg-purple-800 w-full py-3 mt-6">
-                            Conectar
+                        <Button
+                            className="bg-purple-800 w-full py-3 mt-6 flex items-center justify-center"
+                            disabled={isLoading} // Desativa o botão enquanto carrega
+                        >
+                            {isLoading ? (
+                                <CircularProgress size={24} color="inherit" /> // Exibe o CircularProgress
+                            ) : (
+                                "Conectar"
+                            )}
                         </Button>
                     </form>
                 </div>
-                {error === 'CredentialsSignin' && (<div>Erro no login. Verifique suas credenciais.</div>)}
+                {error === 'CredentialsSignin' && (
+                    <div>Erro no login. Verifique suas credenciais.</div>
+                )}
             </div>
             <Toaster />
         </main>

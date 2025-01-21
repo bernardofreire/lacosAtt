@@ -40,7 +40,7 @@ export const AtividadeService = {
     },
 
     // Deletar uma atividade da lista
-    deleteActivity: async (idActivity: string) => {
+    deleteActivity: async (idActivity: number) => {
         const token = await AtividadeService.getSessionToken();
 
         const response = await axios.delete(`https://lacos-v2.fly.dev/activityList/delete/${idActivity}`, {
@@ -62,6 +62,36 @@ export const AtividadeService = {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data;
+    },
+
+    // Remover o link de uma atividade de uma pessoa
+    removeLinkActivityOfPerson: async (id_activity: number) => {
+        const token = await AtividadeService.getSessionToken();
+
+        const response = await axios.post(
+            `https://lacos-v2.fly.dev/activities/action/link/delete/${id_activity}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        }
+        );
+        return response.data;
+    },
+
+
+    // Buscar todas as atividades de uma pessoa
+    getAllActivityLinksOfPerson: async (id_person: number) => {
+        const token = await AtividadeService.getSessionToken();
+
+        const response = await axios.post(
+            `https://lacos-v2.fly.dev/activities/getAll/${id_person}`,
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
                 },
             }
         );

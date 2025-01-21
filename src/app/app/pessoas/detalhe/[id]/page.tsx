@@ -8,7 +8,8 @@ import { Separator } from "@/components/ui/separator"
 import { ChevronLeft, Save, X, Edit2 } from 'lucide-react'
 import { PeopleService } from "@/services/PeopleService"
 import { usePeopleContext } from '@/contexts/PeopleContext'
-
+import { AtividadeService } from '@/services/AtividadeService'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 interface Person {
@@ -45,6 +46,17 @@ interface Person {
   }
 }
 
+
+interface Activity {
+  id_activity: number;
+  name: string;
+  hour_start: string;
+  hour_end: string;
+  id_period: number;
+}
+
+
+
 export default function PersonDetailsScreen({ params }: { params: { id: string } }) {
   const personId = parseInt(params.id)
 
@@ -54,6 +66,61 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
   const [error, setError] = useState<string | null>(null)
   const [person, setPerson] = useState<Person | null>(null)
   const [originalPerson, setOriginalPerson] = useState<Person | null>(null)
+
+
+  const [activities, setActivities] = useState<Activity[]>([]); // Atividades disponíveis
+  const [selectedActivity, setSelectedActivity] = useState<string |null>(null); // Atividade selecionada
+  const [activityError, setActivityError] = useState<number | null>(null);
+
+
+  // Função para buscar todas as atividades
+  const fetchAllActivities = async () => {
+    try {
+      const data = await AtividadeService.getActivityList();
+      console.log(data,"aaaaaaa")
+      setActivities(data);
+    } catch (error) {
+      console.error("Erro ao buscar todas as atividades:", error);
+    }
+  };
+
+  // Função para buscar as atividades vinculadas à pessoa
+  const fetchActivities = async () => {
+    try {
+      const data = await AtividadeService.getAllActivityLinksOfPerson(personId);
+      setActivities(data);
+    } catch (error) {
+      console.error("Erro ao buscar atividades:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllActivities();  // Carregar todas as atividades disponíveis
+    fetchActivities();     // Carregar atividades já vinculadas à pessoa
+  }, [personId]);
+
+
+  // Função para remover atividade selecionada
+  const handleRemoveActivity = () => {
+    setSelectedActivity(null); // Limpar a seleção de atividade
+  };
+
+  // Função para salvar a atividade vinculada
+  // const handleSaveActivity = async () => {
+  //   if (!selectedActivity) {
+  //     setActivityError("Por favor, selecione uma atividade.");
+  //     return;
+  //   }
+  //   // Lógica para salvar a atividade
+  //   try {
+  //     await AtividadeService.linkActivityToPerson(personId, selectedActivity);
+  //     alert("Atividade vinculada com sucesso!");
+  //     fetchActivities(); // Atualizar lista de atividades
+  //     setSelectedActivity(null); // Limpar a seleção de atividade
+  //   } catch (error) {
+  //     console.error("Erro ao vincular atividade:", error);
+  //   }
+  // };
 
   useEffect(() => {
     if (personId) {
@@ -160,7 +227,7 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
           <Button onClick={() => window.history.back()} variant="ghost">
             <ChevronLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
-          
+
 
           <h1 className="text-2xl font-bold text-gray-900">
             Informações de <span className="text-purple-700">{person.data.name}</span>
@@ -498,6 +565,40 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
           </div>
         </div>
 
+
+        {/* Seção de Atividade Selecionada */}
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Selecione uma Atividade</h2>
+          <Select onValueChange={(value) => setSelectedActivity(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Selecione uma atividade" />
+            </SelectTrigger>
+            {/* <SelectContent>
+              {activities.map((activity) => (
+                <SelectItem key={activity.id_activity} value={activity.id_activity}>
+                  {activity.name}
+                </SelectItem>
+              ))}
+            </SelectContent> */}
+          </Select>
+
+          {selectedActivity && (
+            <div className="mt-4 flex items-center space-x-2">
+              <span className="text-lg">Atividade Selecionada: {selectedActivity}</span>
+              <Button variant="outline" onClick={handleRemoveActivity}>
+                <X className="h-4 w-4" /> Remover
+              </Button>
+            </div>
+          )}
+          {activityError && <p className="text-red-500">{activityError}</p>}
+        </div>
+
+        {/* Botão para salvar a atividade */}
+        {/* <div className="mt-4">
+          <Button onClick={handleSaveActivity} disabled={!selectedActivity}>
+            Salvar Atividade
+          </Button>
+        </div> */}
 
 
 

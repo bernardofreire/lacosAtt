@@ -31,7 +31,7 @@ export default function Chart() {
 
 
     return (
-        <Card className="w-full md:w-1/2 md:max-w-[600px]">
+        <Card className="w-full md:w-1/2 md:max-w-[750px]">
             <CardHeader>
                 <div className="flex items-center justify-center">
                     <CardTitle className="text-lg sm:text-xl text-gray-800">
