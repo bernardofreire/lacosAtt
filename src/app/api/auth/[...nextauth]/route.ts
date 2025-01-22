@@ -48,19 +48,19 @@ const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }) {
-            if (user?.token) {
+            if (user && 'token' in user) { // Verificação se 'token' existe em 'user'
                 token.jwt = user.token; // Atribui o token ao JWT
             } else if (!token.jwt) {
-                // Se não houver token, você pode adicionar uma validação extra, como gerar um novo token ou redirecionar para logout
-                token.jwt = null;
+                token.jwt = null; // Se não houver token, define como null
             }
             return token;
         },
         async session({ session, token }) {
-            session.jwt = token.jwt as string;
+            session.jwt = token.jwt as string; // Atribui o JWT na sessão
             return session;
         }
-    },
+    }
+    ,
 
     secret: process.env.NEXTAUTH_SECRET,
 };
