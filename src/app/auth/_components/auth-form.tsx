@@ -3,29 +3,33 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { signIn } from "next-auth/react";
-import { useState, useEffect, Suspense } from "react";
+import { useState,   } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
+import { GetServerSideProps } from "next";
 
-export function AuthForm() {
+
+// Função para capturar os parâmetros da URL
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const errorParam = context.query.error || null;
+    return {
+        props: {
+            error: errorParam,
+        },
+    };
+};
+
+export function AuthForm({ error }: { error: string | null }) {
     const form = useForm();
     const router = useRouter();
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const searchParams = useSearchParams(); // Hook que usa os parâmetros da URL
 
-    // Use useEffect para atualizar o erro ao mudar os parâmetros de busca na URL
-    useEffect(() => {
-        const errorParam = searchParams.get('error');
-        if (errorParam) {
-            setError(errorParam);
-        }
-    }, [searchParams]);
+
 
     const handleSubmit = form.handleSubmit(async (data) => {
         setIsLoading(true);
@@ -111,10 +115,8 @@ export function AuthForm() {
 }
 
 // Envolva seu componente com Suspense
-export default function AuthPage() {
+export default function AuthPage({ error }: { error: string | null }) {
     return (
-        <Suspense fallback={<div>Carregando...</div>}>
-            <AuthForm />
-        </Suspense>
+        <AuthForm error={error} />
     );
 }

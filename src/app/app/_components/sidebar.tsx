@@ -19,7 +19,9 @@ const navItems = [
 
 export default function Sidebar({ userName }: { userName: string; userEmail: string }) {
   const [activeItem, setActiveItem] = useState("Dashboard")
-  const [isAdmin] = useState(true)
+
+  // Verifica se o nome do usuário é "admin"
+  const isAdmin = userName === "admin";
 
   const getInitials = (name: string) => {
     const nameParts = name.split(" ");
@@ -46,7 +48,7 @@ export default function Sidebar({ userName }: { userName: string; userEmail: str
           {navItems.map((item) => (
             <Link href={item.href} key={item.href} passHref>
               <Button
-             
+
                 variant="ghost"
                 className={cn(
                   "w-full justify-start",
@@ -64,19 +66,19 @@ export default function Sidebar({ userName }: { userName: string; userEmail: str
           {isAdmin && (
             <Link href="/app/usuarios" passHref>
               <Button
-             
                 variant="ghost"
                 className={cn(
                   "w-full justify-start",
-                  activeItem === "Users" ? "bg-primary text-white hover:bg-foreground hover:text-white" : "text-muted-foreground hover:bg-gray-100"
+                  activeItem === "Usuários" ? "bg-primary text-white hover:bg-foreground hover:text-white" : "text-muted-foreground hover:bg-gray-100"
                 )}
-                onClick={() => setActiveItem("Users")}
+                onClick={() => setActiveItem("Usuários")}
               >
                 <Shield className="mr-2 h-4 w-4" />
                 Usuários
               </Button>
             </Link>
           )}
+
         </nav>
       </ScrollArea>
       <div className="mt-auto p-4 border-t mb-4">
