@@ -46,7 +46,7 @@ export default function Sidebar({ userName }: { userName: string; userEmail: str
           {navItems.map((item) => (
             <Link href={item.href} key={item.href} passHref>
               <Button
-                asChild
+             
                 variant="ghost"
                 className={cn(
                   "w-full justify-start",
@@ -64,7 +64,7 @@ export default function Sidebar({ userName }: { userName: string; userEmail: str
           {isAdmin && (
             <Link href="/app/usuarios" passHref>
               <Button
-                asChild
+             
                 variant="ghost"
                 className={cn(
                   "w-full justify-start",

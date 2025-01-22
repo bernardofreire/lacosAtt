@@ -8,16 +8,16 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { signIn } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 
 export function AuthForm() {
     const form = useForm();
     const router = useRouter();
     const { toast } = useToast();
-    const [isLoading, setIsLoading] = useState(false); 
-    const [error, setError] = useState<string | null>(null); 
-    const searchParams = useSearchParams(); 
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const searchParams = useSearchParams(); // Hook que usa os parâmetros da URL
 
     // Use useEffect para atualizar o erro ao mudar os parâmetros de busca na URL
     useEffect(() => {
@@ -25,10 +25,10 @@ export function AuthForm() {
         if (errorParam) {
             setError(errorParam);
         }
-    }, [searchParams]); // Reage a mudanças nos parâmetros da URL
+    }, [searchParams]);
 
     const handleSubmit = form.handleSubmit(async (data) => {
-        setIsLoading(true); // Inicia o carregamento
+        setIsLoading(true);
         console.log(data);
 
         const result = await signIn("credentials", {
@@ -91,10 +91,10 @@ export function AuthForm() {
                         </div>
                         <Button
                             className="bg-purple-800 w-full py-3 mt-6 flex items-center justify-center"
-                            disabled={isLoading} // Desativa o botão enquanto carrega
+                            disabled={isLoading}
                         >
                             {isLoading ? (
-                                <CircularProgress size={24} color="inherit" /> // Exibe o CircularProgress
+                                <CircularProgress size={24} color="inherit" />
                             ) : (
                                 "Conectar"
                             )}
@@ -107,5 +107,14 @@ export function AuthForm() {
             </div>
             <Toaster />
         </main>
+    );
+}
+
+// Envolva seu componente com Suspense
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<div>Carregando...</div>}>
+            <AuthForm />
+        </Suspense>
     );
 }
