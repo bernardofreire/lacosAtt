@@ -8,16 +8,24 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 
 export function AuthForm() {
     const form = useForm();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const error = searchParams.get('error');
     const { toast } = useToast();
-    const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
+    const [isLoading, setIsLoading] = useState(false); 
+    const [error, setError] = useState<string | null>(null); 
+    const searchParams = useSearchParams(); 
+
+    // Use useEffect para atualizar o erro ao mudar os parâmetros de busca na URL
+    useEffect(() => {
+        const errorParam = searchParams.get('error');
+        if (errorParam) {
+            setError(errorParam);
+        }
+    }, [searchParams]); // Reage a mudanças nos parâmetros da URL
 
     const handleSubmit = form.handleSubmit(async (data) => {
         setIsLoading(true); // Inicia o carregamento
