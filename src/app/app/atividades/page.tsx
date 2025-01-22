@@ -131,7 +131,7 @@ export default function ActivitiesDashboard() {
   const handleDelete = async (id: number) => {
     try {
       // Chama o serviço para deletar a atividade
-      await AtividadeService.deleteActivity(id.toString());
+      await AtividadeService.deleteActivity(id);
 
       // Atualiza a lista de atividades
       const atividadesResponse = await AtividadeService.getActivityList();
