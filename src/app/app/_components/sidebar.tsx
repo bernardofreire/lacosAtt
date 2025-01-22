@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Home, Users, Activity, Settings, LogOut, ChevronDown, Shield } from "lucide-react"
+import { Home, Users, Activity, LogOut, ChevronDown, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "next-auth/react"
 
@@ -17,9 +17,9 @@ const navItems = [
   { icon: Activity, label: "Atividades", href: "/app/atividades" },
 ]
 
-export default function Sidebar({ userName, userEmail }: { userName: string; userEmail: string }) {
+export default function Sidebar({ userName }: { userName: string; userEmail: string }) {
   const [activeItem, setActiveItem] = useState("Dashboard")
-  const [isAdmin, setIsAdmin] = useState(true) // This should be set based on user role
+  const [isAdmin] = useState(true)
 
   const getInitials = (name: string) => {
     const nameParts = name.split(" ");

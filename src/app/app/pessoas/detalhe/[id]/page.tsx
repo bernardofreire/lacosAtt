@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +9,7 @@ import { ChevronLeft, Save, X, Edit2 } from 'lucide-react'
 import { PeopleService } from "@/services/PeopleService"
 import { usePeopleContext } from '@/contexts/PeopleContext'
 import { AtividadeService } from '@/services/AtividadeService'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 interface Person {
@@ -60,7 +60,7 @@ interface Activity {
 export default function PersonDetailsScreen({ params }: { params: { id: string } }) {
   const personId = parseInt(params.id)
 
-  const { people, setPeople } = usePeopleContext();
+  const { setPeople } = usePeopleContext();
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,35 +69,37 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
 
 
   const [activities, setActivities] = useState<Activity[]>([]); // Atividades disponíveis
-  const [selectedActivity, setSelectedActivity] = useState<string |null>(null); // Atividade selecionada
-  const [activityError, setActivityError] = useState<number | null>(null);
+  const [selectedActivity, setSelectedActivity] = useState<string | null>(null); // Atividade selecionada
+  // const [activityError, setActivityError] = useState<number | null>(null);
 
 
-  // Função para buscar todas as atividades
-  const fetchAllActivities = async () => {
+
+  const fetchAllActivities = useCallback(async () => {
     try {
       const data = await AtividadeService.getActivityList();
-      console.log(data,"aaaaaaa")
-      setActivities(data);
+      console.log(data, "aaaaaaa");
+      setActivities(data); // Atualiza o estado
+      console.log(activities,"aqui")
+      // Se você quiser ver o estado atualizado, use o `data` diretamente
+      console.log(data, "aaa");
     } catch (error) {
       console.error("Erro ao buscar todas as atividades:", error);
     }
-  };
+  }, [setActivities]);
 
-  // Função para buscar as atividades vinculadas à pessoa
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     try {
       const data = await AtividadeService.getAllActivityLinksOfPerson(personId);
       setActivities(data);
     } catch (error) {
       console.error("Erro ao buscar atividades:", error);
     }
-  };
+  }, [personId, setActivities]);
 
   useEffect(() => {
-    fetchAllActivities();  // Carregar todas as atividades disponíveis
-    fetchActivities();     // Carregar atividades já vinculadas à pessoa
-  }, [personId]);
+    fetchAllActivities();
+    fetchActivities();
+  }, [fetchAllActivities, fetchActivities]);
 
 
   // Função para remover atividade selecionada
@@ -574,12 +576,12 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
               <SelectValue placeholder="Selecione uma atividade" />
             </SelectTrigger>
             {/* <SelectContent>
-              {activities.map((activity) => (
-                <SelectItem key={activity.id_activity} value={activity.id_activity}>
-                  {activity.name}
-                </SelectItem>
-              ))}
-            </SelectContent> */}
+                {activities.map((activity) => (
+                  <SelectItem key={activity.id_activity} value={activity.id_activity}>
+                    {activity.name}
+                  </SelectItem>
+                ))}
+              </SelectContent> */}
           </Select>
 
           {selectedActivity && (
@@ -590,7 +592,7 @@ export default function PersonDetailsScreen({ params }: { params: { id: string }
               </Button>
             </div>
           )}
-          {activityError && <p className="text-red-500">{activityError}</p>}
+          {/* {activityError && <p className="text-red-500">{activityError}</p>} */}
         </div>
 
         {/* Botão para salvar a atividade */}

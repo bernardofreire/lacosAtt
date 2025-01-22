@@ -25,7 +25,7 @@ export const PeopleService = {
 
 
   // Criar uma nova pessoa
-  createPerson: async (personData: any) => {
+  createPerson: async (personData: unknown) => {
     const token = await PeopleService.getSessionToken();
 
     const response = await api.post("/persons/create", personData, {
@@ -42,7 +42,7 @@ export const PeopleService = {
 
 
   // Atualizar uma pessoa existente
-  updatePerson: async (personData: any) => {
+  updatePerson: async (personData: unknown) => {
     const token = await PeopleService.getSessionToken();
 
     const response = await api.patch("/persons/update", personData, {
@@ -122,7 +122,7 @@ export const PeopleService = {
   },
 
 
-  linkActivityPerson: async (activityPerson: any) => {
+  linkActivityPerson: async (activityPerson: unknown) => {
     const token = await PeopleService.getSessionToken();
     
     const response = await api.post(`/activities/action/link`, activityPerson, {

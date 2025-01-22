@@ -1,12 +1,12 @@
 "use client";
 
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent } from "react";
 import React from "react";
 import { Plus, MoreHorizontal, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -31,6 +31,40 @@ import { PeopleService } from "@/services/PeopleService";
 
 import { useRouter } from "next/navigation";
 // import { AtividadeService } from '@/services/AtividadeService';
+
+
+
+
+
+interface Person {
+  name: string;
+  last_name: string;
+  email: string;
+  birth_date: string;
+  rg: string;
+  cpf: string;
+  blood_type: string;
+  city: string;
+  address: string;
+  address_number: string;
+  cep: string;
+  home_phone: string;
+  cell_phone: string;
+  contact_phone: string;
+  cad_unico: string;
+  nis: string;
+  school: string;
+  res_name: string;
+  res_relationship: string;
+  res_rg: string;
+  res_cpf: string;
+  res_cell_phone: string;
+  [key: string]: string; // Adicione isso para permitir campos dinâmicos
+}
+
+
+
+
 
 const steps = [
   [
@@ -72,6 +106,32 @@ const steps = [
   // ],
 ];
 
+const defaultPerson: Person = {
+  name: "",
+  last_name: "",
+  email: "",
+  birth_date: "",
+  rg: "",
+  cpf: "",
+  blood_type: "",
+  city: "",
+  address: "",
+  address_number: "",
+  cep: "",
+  home_phone: "",
+  cell_phone: "",
+  contact_phone: "",
+  cad_unico: "",
+  nis: "",
+  school: "",
+  res_name: "",
+  res_relationship: "",
+  res_rg: "",
+  res_cpf: "",
+  res_cell_phone: "",
+};
+
+
 
 
 
@@ -79,7 +139,7 @@ const steps = [
 export default function PeopleDashboard() {
   const { people, setPeople, isLoading } = usePeopleContext();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [newPerson, setNewPerson] = useState<Record<string, any>>({});
+  const [newPerson, setNewPerson] = useState<Partial<Person>>(defaultPerson);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [currentStep, setCurrentStep] = useState(0);
   // const [activities, setActivities] = useState([]);
@@ -151,7 +211,7 @@ export default function PeopleDashboard() {
       setPeople(updatedPeople.data);
 
       // Reseta os estados
-      setNewPerson({});
+      setNewPerson(defaultPerson);
       setCurrentStep(0);
       setIsDialogOpen(false);
     } catch (error) {
@@ -176,8 +236,8 @@ export default function PeopleDashboard() {
 
 
 
-  const handleDetail = (person: Record<string, any>) => {
-    router.push(`/app/pessoas/detalhe/${person.id_person}?name=${encodeURIComponent(person.name)}`);
+  const handleDetail = (person: Partial<Person>) => {
+    router.push(`/app/pessoas/detalhe/${person.id_person}?name=${encodeURIComponent(person.name ?? '')}`);
   };
 
 
@@ -276,7 +336,7 @@ export default function PeopleDashboard() {
           </TableHeader>
           <TableBody>
             {people?.map((person) => (
-              <TableRow key={person.id_person} onClick={() => handleDetail(person)} className="cursor-pointer">
+              <TableRow key={person.id_person} onClick={() => handleDetail(person as unknown as Partial<Person>)} className="cursor-pointer">
                 <TableCell>{person.name}</TableCell>
                 <TableCell>{person.cpf}</TableCell>
                 <TableCell>{person.email}</TableCell>

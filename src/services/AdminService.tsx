@@ -53,7 +53,7 @@ export const AdminServices = {
 
 
     // Atualizar usuário
-    updateUser: async (idUser: number, updatedUser: any) => {
+    updateUser: async (idUser: number, updatedUser: unknown) => {
         const token = await AdminServices.getSessionToken();
 
         const response = await api.patch(`/user/update/${idUser}`, updatedUser, {

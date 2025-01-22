@@ -9,13 +9,22 @@ import { useRouter } from 'next/navigation'
 import { AdminServices } from '@/services/AdminService'
 import { ChevronLeft, Save } from 'lucide-react'
 
+interface User {
+    id: number;
+    username: string;
+    email: string;
+    active: boolean;
+    // Adicione outros campos conforme necessário
+}
+
+
 export default function EditUserDetails({ params }: { params: { id: string } }) {
     const userId = parseInt(params.id)
 
 
     const router = useRouter()
 
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<User | null>(null)
     const [password, setPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
