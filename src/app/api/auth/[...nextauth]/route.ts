@@ -1,6 +1,12 @@
 import NextAuth, { AuthOptions } from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
 
+declare module "next-auth" {
+    interface Session {
+      jwt?: string;
+    }
+  }
+
 const authOptions: AuthOptions = {
     pages: {
         signIn: '/auth'
